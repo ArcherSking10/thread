@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#F5F0E8;--cream2:#EDE5D8;
+  --ink:#1E1A15;--ink2:#2E2820;
+  --gold:#9A7D52;--gold-l:#C4A882;--gold-p:#E8D9C0;
+  --muted:#7A7060;
+  --border:rgba(154,125,82,.22);--border2:rgba(154,125,82,.10);
+  --success:#4A8A4A;--danger:#A03030;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--cream);overflow-x:hidden;line-height:1.6}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:300}

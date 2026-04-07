@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Orders — Lunastitch</title>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/layout.css">
+</head>
+<body>
+<nav class="site-nav" id="navbar">
+  <a href="/" class="logo-mark">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="13" stroke="#9A7D52" stroke-width=".8"/>
+      <path d="M9 19 Q14 8 19 19" stroke="#9A7D52" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <circle cx="14" cy="13" r="1.5" fill="#9A7D52"/>
+    </svg>
+    <span class="logo-text">LUNASTITCH</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <span id="nav-auth"></span>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <section class="sec">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:32px">
+      <div>
+        <div class="s-label">Your account</div>
+        <h2 id="user-name" style="margin-bottom:0">—</h2>
+      </div>
+      <button class="btn-ghost btn-sm"
+        onclick="import('/js/auth.js').then(m => m.logout())">Sign out</button>
+    </div>
+    <div id="orders-list">
+      <div class="spinner"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+window.addEventListener('scroll', () =>
+  document.getElementById('navbar').classList.toggle('scrolled', scrollY > 40));
+</script>
+<script type="module">
+  import { isConfigured } from '/js/config.js';
+  import { updateNav } from '/js/auth.js';
+
+  updateNav();
+
+  if (!isConfigured()) {
+    document.getElementById('user-name').textContent = 'Dev mode';
+    document.getElementById('orders-list').innerHTML = `
+      <div class="alert alert-info">
+        <strong>本地调试模式</strong> — Supabase 未配置，订单功能不可用。<br>
+        填写 <code>js/config.js</code> 后重新访问此页面。<br><br>
+        <a href="/" style="color:var(--gold)">← 返回首页</a>
+      </div>`;
+  } else {
+    // 真实逻辑
+    import('/js/account.js');
+  }
+</script>
+</body>
+</html>

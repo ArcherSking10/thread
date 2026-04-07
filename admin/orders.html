@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orders — Lunastitch Admin</title>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/layout.css">
+</head>
+<body data-page="orders">
+
+<nav class="site-nav">
+  <a href="/" class="logo-mark"><span class="logo-text">LUNASTITCH</span></a>
+  <span style="font-size:10px;color:var(--gold);letter-spacing:.2em">ADMIN</span>
+  <button class="btn-ghost btn-sm" onclick="logout()">Sign out</button>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <a href="/admin/">Dashboard</a>
+    <a href="/admin/orders.html" class="active">Orders</a>
+    <a href="/admin/products.html">Products</a>
+    <a href="/" target="_blank">View site ↗</a>
+  </aside>
+  <main class="admin-main">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <div class="admin-title" style="margin-bottom:0">Orders</div>
+      <select class="f-input" id="status-filter" style="width:200px;padding:8px 12px">
+        <option value="">All statuses</option>
+        <option>pending</option>
+        <option>in_production</option>
+        <option>preview_sent</option>
+        <option>revision_requested</option>
+        <option>preview_approved</option>
+        <option>shipped</option>
+        <option>complete</option>
+      </select>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Product</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Photo</th>
+            <th>Preview</th>
+            <th>Admin note</th>
+          </tr>
+        </thead>
+        <tbody id="orders-tbody">
+          <tr>
+            <td colspan="8" style="text-align:center;padding:32px">
+              <div class="spinner"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+  import { logout } from '/js/auth.js';
+  import { isConfigured } from '/js/config.js';
+  window.logout = logout;
+
+  if (!isConfigured()) {
+    document.getElementById('orders-tbody').innerHTML =
+      `<tr><td colspan="8" style="padding:32px">
+        <div class="alert alert-info">本地调试模式 — 填写 js/config.js 后可看到真实订单。</div>
+      </td></tr>`;
+    document.getElementById('status-filter').disabled = true;
+  }
+</script>
+<script type="module" src="/js/admin.js"></script>
+</body>
+</html>

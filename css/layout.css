@@ -1,0 +1,44 @@
+nav.site-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(245,240,232,.94);backdrop-filter:blur(12px);border-bottom:.5px solid var(--border);transition:padding .3s}
+nav.site-nav.scrolled{padding:11px 48px}
+.logo-mark{display:flex;align-items:center;gap:9px}
+.logo-text{font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;font-weight:300;letter-spacing:.22em}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{font-size:10px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:8px 22px;border:.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:background .2s}
+.nav-cta:hover{background:var(--gold-p)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:22px;height:.5px;background:var(--ink2)}
+.mobile-menu{display:none;position:fixed;inset:0;z-index:150;background:var(--cream);flex-direction:column;align-items:center;justify-content:center;gap:30px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-size:22px;font-family:'Cormorant Garamond',Georgia,serif;color:var(--ink2);letter-spacing:.1em}
+.m-close{position:absolute;top:20px;right:24px;background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer}
+.page-wrap{padding-top:64px;min-height:100vh}
+section.sec{padding:72px 56px}
+section.sec-alt{background:var(--cream2)}
+.admin-layout{display:grid;grid-template-columns:200px 1fr;min-height:100vh;padding-top:60px}
+.admin-sidebar{background:var(--ink2);padding:24px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+.admin-sidebar a{display:block;padding:12px 24px;font-size:11px;letter-spacing:.12em;color:var(--gold-l);text-transform:uppercase;border-left:2px solid transparent;transition:all .2s}
+.admin-sidebar a:hover,.admin-sidebar a.active{color:var(--cream);border-left-color:var(--gold)}
+.admin-main{padding:40px;background:var(--cream2);overflow-y:auto}
+.admin-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;font-weight:300;color:var(--ink2);margin-bottom:28px}
+footer.site-footer{background:var(--ink2);padding:48px 56px 36px;display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:40px}
+.f-logo{font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;font-weight:300;letter-spacing:.22em;color:var(--cream);margin-bottom:10px}
+.f-tagline{font-size:11px;color:var(--gold-l);line-height:1.9}
+.f-col-title{font-size:10px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:14px}
+.f-links{list-style:none}
+.f-links li{margin-bottom:8px}
+.f-links a{font-size:12px;color:var(--muted);transition:color .2s}
+.f-links a:hover{color:var(--gold-l)}
+.f-bottom{border-top:.5px solid rgba(154,125,82,.18);margin-top:36px;padding-top:22px;grid-column:1/-1;display:flex;justify-content:space-between;align-items:center}
+.f-copy{font-size:11px;color:var(--muted)}
+@media(max-width:900px){
+  nav.site-nav{padding:14px 20px}.nav-links{display:none}.hamburger{display:flex}
+  section.sec{padding:52px 22px}
+  footer.site-footer{grid-template-columns:1fr;gap:24px;padding:36px 24px}
+  .f-bottom{flex-direction:column;gap:8px;text-align:center}
+  .admin-layout{grid-template-columns:1fr}
+  .admin-sidebar{position:static;height:auto;display:flex;flex-wrap:wrap;padding:12px}
+  .admin-sidebar a{padding:8px 16px}
+}
+@media(max-width:600px){.f-row{grid-template-columns:1fr}}

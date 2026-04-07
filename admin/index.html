@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Dashboard — Lunastitch</title>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/layout.css">
+</head>
+<body data-page="dashboard">
+
+<nav class="site-nav">
+  <a href="/" class="logo-mark"><span class="logo-text">LUNASTITCH</span></a>
+  <span style="font-size:10px;color:var(--gold);letter-spacing:.2em">ADMIN</span>
+  <button class="btn-ghost btn-sm" onclick="logout()">Sign out</button>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <a href="/admin/" class="active">Dashboard</a>
+    <a href="/admin/orders.html">Orders</a>
+    <a href="/admin/products.html">Products</a>
+    <a href="/" target="_blank">View site ↗</a>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-title">Dashboard</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:36px">
+      <div class="card card-alt" style="text-align:center">
+        <div style="font-size:10px;letter-spacing:.12em;color:var(--muted);margin-bottom:8px">PENDING</div>
+        <div style="font-size:32px;font-family:'Cormorant Garamond',Georgia,serif;color:var(--gold)" id="stat-pending">—</div>
+      </div>
+      <div class="card card-alt" style="text-align:center">
+        <div style="font-size:10px;letter-spacing:.12em;color:var(--muted);margin-bottom:8px">PRODUCTION</div>
+        <div style="font-size:32px;font-family:'Cormorant Garamond',Georgia,serif;color:var(--gold)" id="stat-in_production">—</div>
+      </div>
+      <div class="card card-alt" style="text-align:center">
+        <div style="font-size:10px;letter-spacing:.12em;color:var(--muted);margin-bottom:8px">PREVIEW</div>
+        <div style="font-size:32px;font-family:'Cormorant Garamond',Georgia,serif;color:#E8A020" id="stat-preview_sent">—</div>
+      </div>
+      <div class="card card-alt" style="text-align:center">
+        <div style="font-size:10px;letter-spacing:.12em;color:var(--muted);margin-bottom:8px">SHIPPED</div>
+        <div style="font-size:32px;font-family:'Cormorant Garamond',Georgia,serif;color:var(--success)" id="stat-shipped">—</div>
+      </div>
+      <div class="card card-alt" style="text-align:center">
+        <div style="font-size:10px;letter-spacing:.12em;color:var(--muted);margin-bottom:8px">TOTAL</div>
+        <div style="font-size:32px;font-family:'Cormorant Garamond',Georgia,serif;color:var(--ink2)" id="stat-total">—</div>
+      </div>
+    </div>
+    <div class="alert alert-info">
+      <strong>⚠️ 上线前 Checklist</strong><br><br>
+      1. 填写 <code>js/config.js</code> 中所有 API Key<br>
+      2. 在 Supabase SQL Editor 执行 <code>supabase/schema.sql</code>（含 seed 数据）<br>
+      3. 部署 <code>supabase/create-checkout.ts</code> 为 Edge Function<br>
+      4. 在 Stripe Dashboard 创建产品，Price ID 填入 Admin → Products<br>
+      5. 在 Supabase profiles 表把你的账号 role 改为 <code>admin</code>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+  import { requireAdmin, logout } from '/js/auth.js';
+  import { getAllOrders } from '/js/api.js';
+  import { isConfigured } from '/js/config.js';
+  window.logout = logout;
+
+  if (!isConfigured()) {
+    document.getElementById('stat-total').textContent = '0';
+    ['pending','in_production','preview_sent','shipped'].forEach(k => {
+      const el = document.getElementById('stat-' + k);
+      if (el) el.textContent = '0';
+    });
+  } else {
+    requireAdmin().then(async () => {
+      const orders = await getAllOrders();
+      const c = {};
+      orders.forEach(o => { c[o.status] = (c[o.status] || 0) + 1; });
+      document.getElementById('stat-total').textContent = orders.length;
+      ['pending','in_production','preview_sent','shipped'].forEach(k => {
+        const el = document.getElementById('stat-' + k);
+        if (el) el.textContent = c[k] || 0;
+      });
+    });
+  }
+</script>
+</body>
+</html>
