@@ -95,7 +95,8 @@ export async function createOrder(data) {
 export async function getUserOrders(userId) {
   if (!isConfigured()) return []; // 本地无订单
   const { data, error } = await supabase.from('orders')
-    .select('*, products(name, thumb_url)').eq('user_id', userId)
+    .select('*')
+    .eq('user_id', userId)
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data;

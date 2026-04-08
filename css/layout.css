@@ -5,6 +5,9 @@ nav.site-nav.scrolled{padding:11px 48px}
 .nav-links{display:flex;gap:28px;align-items:center}
 .nav-links a{font-size:10px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;transition:color .2s}
 .nav-links a:hover{color:var(--gold)}
+#nav-auth{display:inline-flex;align-items:center;gap:20px}
+#nav-auth .nav-sep{position:relative;padding-left:21px}
+#nav-auth .nav-sep::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:.5px;height:11px;background:var(--border)}
 .nav-cta{font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:8px 22px;border:.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:background .2s}
 .nav-cta:hover{background:var(--gold-p)}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}

@@ -96,10 +96,9 @@ export async function updateNav() {
 
   const user = await getCurrentUser();
   if (user) {
-    const sep = `<span style="display:inline-block;width:.5px;height:10px;background:var(--border);margin:0 4px;vertical-align:middle"></span>`;
     el.innerHTML = user.isAdmin
-      ? `<a href="/admin/">Admin</a>${sep}<a href="#" onclick="import('/js/auth.js').then(m => m.logout())">Sign out</a>`
-      : `<a href="/account.html">My orders</a>${sep}<a href="#" onclick="import('/js/auth.js').then(m => m.logout())">Sign out</a>`;
+      ? `<a href="/admin/">Admin</a><a href="#" class="nav-sep" onclick="import('/js/auth.js').then(m => m.logout())">Sign out</a>`
+      : `<a href="/account.html">My orders</a><a href="#" class="nav-sep" onclick="import('/js/auth.js').then(m => m.logout())">Sign out</a>`;
   } else {
     el.innerHTML = `<a href="/login.html">Sign in</a>`;
   }
