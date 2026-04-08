@@ -59,7 +59,8 @@ export async function requireAuth(redirectTo = '/login.html') {
   if (!isConfigured()) return null; // 本地调试：跳过守卫
   const session = await getSession();
   if (!session) {
-    window.location.href = redirectTo + '?next=' + encodeURIComponent(location.pathname);
+    const next = location.pathname + location.search;
+    window.location.href = redirectTo + '?next=' + encodeURIComponent(next);
     return null;
   }
   return session;
@@ -87,18 +88,18 @@ export async function updateNav() {
   const el = document.getElementById('nav-auth');
   if (!el) return;
 
+  // 未配置时：不显示任何内容（移除 DEV MODE）
   if (!isConfigured()) {
-    el.innerHTML = `<span style="font-size:10px;color:var(--gold);letter-spacing:.1em">DEV MODE</span>`;
+    el.innerHTML = `<a href="/login.html">Sign in</a>`;
     return;
   }
 
   const user = await getCurrentUser();
   if (user) {
+    const sep = `<span style="display:inline-block;width:.5px;height:10px;background:var(--border);margin:0 4px;vertical-align:middle"></span>`;
     el.innerHTML = user.isAdmin
-      ? `<a href="/admin/">Admin</a>
-         <a href="#" onclick="import('/js/auth.js').then(m => m.logout())">Sign out</a>`
-      : `<a href="/account.html">My orders</a>
-         <a href="#" onclick="import('/js/auth.js').then(m => m.logout())">Sign out</a>`;
+      ? `<a href="/admin/">Admin</a>${sep}<a href="#" onclick="import('/js/auth.js').then(m => m.logout())">Sign out</a>`
+      : `<a href="/account.html">My orders</a>${sep}<a href="#" onclick="import('/js/auth.js').then(m => m.logout())">Sign out</a>`;
   } else {
     el.innerHTML = `<a href="/login.html">Sign in</a>`;
   }
