@@ -33,23 +33,38 @@ async function initOrders() {
 
 async function loadOrders(status) {
   const orders = await getAllOrders(status ? { status } : {});
-  document.getElementById("orders-tbody").innerHTML = orders.map(o => {
-    const cust = (o.profiles && (o.profiles.full_name || o.profiles.email)) || "-";
-    const prod = (o.products && o.products.name) || "-";
-    const opts = STATUSES.map(s => `<option value="${s}"${o.status===s?" selected":""}>${s}</option>`).join("");
-    const photo = o.photo_url ? `<a href="${o.photo_url}" target="_blank" style="color:var(--gold);font-size:11px">View</a>` : "-";
-    const prevBtn = `<input type="file" id="pf-${o.id}" style="display:none" accept="image/*" onchange="uploadPreview('${o.id}',this.files[0])">`;
-    const prevLink = o.preview_url ? ` <a href="${o.preview_url}" target="_blank" style="color:var(--gold);font-size:11px">View</a>` : "";
-    return `<tr>
-      <td style="font-family:monospace;font-size:11px">${o.id.slice(0,8)}</td>
-      <td>${cust}</td><td>${prod}</td>
-      <td>${new Date(o.created_at).toLocaleDateString()}</td>
-      <td><select class="f-input" style="padding:5px;font-size:11px" onchange="changeStatus('${o.id}',this.value)">${opts}</select></td>
-      <td>${photo}</td>
-      <td>${prevBtn}<button class="btn-ghost btn-sm" onclick="document.getElementById('pf-${o.id}').click()">${o.preview_url?"Replace":"Upload preview"}</button>${prevLink}</td>
-      <td><textarea class="f-input" rows="2" style="font-size:11px;padding:5px;min-width:120px" onblur="saveNote('${o.id}',this.value)">${o.admin_note||""}</textarea></td>
-    </tr>`;
-  }).join("");
+  document.getElementById('orders-tbody').innerHTML = orders.map(o => {
+    const cust    = o.customer_email || '—';
+    const prod    = o.products?.name || '—';
+    const opts    = STATUSES.map(s =>
+      `<option value="${s}"${o.status === s ? ' selected' : ''}>${s}</option>`).join('');
+    const photo   = o.photo_url
+      ? `<a href="${o.photo_url}" target="_blank" style="color:var(--gold);font-size:11px">View</a>` : '—';
+    const prevLink = o.preview_url
+      ? ` <a href="${o.preview_url}" target="_blank" style="color:var(--gold);font-size:11px">View</a>` : '';
+    return `
+      <tr>
+        <td style="font-family:monospace;font-size:11px">${o.id.slice(0, 8)}</td>
+        <td>${cust}</td>
+        <td>${prod}</td>
+        <td>${new Date(o.created_at).toLocaleDateString()}</td>
+        <td>
+          <select onchange="changeStatus('${o.id}', this.value)">${opts}</select>
+        </td>
+        <td>${photo}</td>
+        <td>
+          <input type="file" id="pf-${o.id}" style="display:none" accept="image/*"
+            onchange="uploadPreview('${o.id}', this.files[0])">
+          <button class="btn-ghost btn-sm"
+            onclick="document.getElementById('pf-${o.id}').click()">
+            ${o.preview_url ? 'Replace' : 'Upload preview'}</button>${prevLink}
+        </td>
+        <td>
+          <textarea rows="2" style="min-width:120px"
+            onblur="saveNote('${o.id}', this.value)">${o.admin_note || ''}</textarea>
+        </td>
+      </tr>`;
+  }).join('');
 }
 
 window.changeStatus = async (id,status) => { await updateOrder(id,{status}); };
@@ -106,7 +121,7 @@ window.replaceImg = async (id,file) => {
   alert("Image updated.");
 };
 window.saveEdition = async (productId,idx,field,value) => {
-  const { data:p } = await supabase.from("products").select("editions").eq("id",productId).single();
+  const { data:p } = await supabase.from("products").select("editions").eq("id",productId).maybeSingle();
   const editions = p.editions;
   editions[idx][field] = value;
   await updateProduct(productId,{editions});

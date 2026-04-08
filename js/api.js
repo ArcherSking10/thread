@@ -103,9 +103,10 @@ export async function getUserOrders(userId) {
 }
 
 export async function getAllOrders(filters = {}) {
-  if (!isConfigured()) return []; // 本地无订单
-  let q = supabase.from('orders')
-    .select('*, profiles(email, full_name), products(name)')
+  if (!isConfigured()) return [];
+  let q = supabase
+    .from('orders')
+    .select('*, products!orders_product_id_fkey(name)')
     .order('created_at', { ascending: false });
   if (filters.status) q = q.eq('status', filters.status);
   const { data, error } = await q;
