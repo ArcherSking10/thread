@@ -110,14 +110,18 @@
   };
 
   window.handleSignup = async e => {
-    e.preventDefault();
-    try {
-      await signUp(document.getElementById('signup-email').value,
-                   document.getElementById('signup-pass').value,
-                   document.getElementById('signup-name').value);
-      showAlert('Account created! Check your email to confirm.', 'success');
-    } catch (err) { showAlert(err.message); }
-  };
+  e.preventDefault();
+  try {
+    await signUp(
+      document.getElementById('signup-email').value,
+      document.getElementById('signup-pass').value,
+      document.getElementById('signup-name').value
+    );
+    // 注册成功后直接切换到 Sign in 页，带成功提示
+    switchTab('login', document.querySelector('.ltab'));
+    showAlert('Account created! Please sign in.', 'success');
+  } catch (err) { showAlert(err.message); }
+};
 </script>
 </body>
 </html>

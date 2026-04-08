@@ -59,13 +59,14 @@ export async function getProducts() {
   return data;
 }
 
-export async function getProduct(id) {
+export async function getProduct(slug) {
   if (!isConfigured()) {
-    const p = MOCK_PRODUCTS.find(p => p.id === id);
+    const p = MOCK_PRODUCTS.find(p => p.id === slug);
     if (!p) throw new Error('Product not found');
     return p;
   }
-  const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
+  const { data, error } = await supabase
+    .from('products').select('*').eq('slug', slug).single();
   if (error) throw error;
   return data;
 }
