@@ -16,7 +16,7 @@
 .etab { flex: 1; padding: 11px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; border: .5px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all .2s; }
 .etab.active { background: var(--ink2); color: var(--cream); border-color: var(--ink2); }
 .features-list { list-style: none; margin-bottom: 28px; }
-.features-list li { font-size: 12px; color: var(--muted); padding: 7px 0; border-bottom: .5px solid var(--border2); display: flex; gap: 10px; align-items: baseline; }
+.features-list li { font-size: 13px; color: var(--muted); padding: 7px 0; border-bottom: .5px solid var(--border2); display: flex; gap: 10px; align-items: baseline; }
 .features-list li::before { content: '◈'; color: var(--gold-l); font-size: 9px; flex-shrink: 0; }
 @media(max-width:800px) {
   .product-layout { grid-template-columns: 1fr; }
@@ -31,6 +31,8 @@
   <button class="m-close" onclick="closeMobile()">✕</button>
   <a href="/" onclick="closeMobile()">Home</a>
   <a href="/#collections" onclick="closeMobile()">Collections</a>
+  <div style="width:32px;height:.5px;background:var(--border)"></div>
+  <div id="mobile-auth-links"></div>
 </div>
 <nav class="site-nav" id="navbar">
   <a href="/" class="logo-mark">
@@ -58,9 +60,10 @@
       </div>
     </div>
     <div class="product-detail">
-      <div style="font-size:10px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:10px">Template</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:20px"><a href="/" style="color:var(--muted)">Home</a><span style="margin:0 6px">›</span><a href="/#collections" style="color:var(--muted)">Collections</a><span style="margin:0 6px">›</span><span id="breadcrumb-name" style="color:var(--ink2)">—</span></div>
+      <div style="font-size:10px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:10px">Collection</div>
       <h1 id="product-name"    style="font-size:34px;margin-bottom:10px">Loading…</h1>
-      <p  id="product-tagline" style="font-size:13px;color:var(--muted);line-height:1.9;margin-bottom:32px"></p>
+      <p  id="product-tagline" style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:32px"></p>
       <div style="font-size:10px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;margin-bottom:10px">Choose edition</div>
       <div class="edition-tabs" id="edition-tabs"></div>
       <div id="edition-price"
@@ -70,7 +73,7 @@
         Request this piece
       </button>
       <p style="font-size:11px;color:var(--muted);text-align:center">
-        No payment now — we confirm details via email first.
+        You'll upload your photo and confirm details in the next steps.
       </p>
       <div id="product-alert" style="margin-top:16px"></div>
     </div>

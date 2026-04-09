@@ -1,7 +1,6 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 import { SUPABASE_URL, SUPABASE_ANON_KEY, isConfigured } from './config.js';
 
-// 只在配置好时才初始化 supabase client
 export const supabase = isConfigured()
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
@@ -20,12 +19,12 @@ export async function getCurrentUser() {
     .from('profiles')
     .select('role, full_name')
     .eq('id', session.user.id)
-    .single();
+    .maybeSingle();
   return {
     ...session.user,
-    role:     profile?.role,
-    fullName: profile?.full_name,
-    isAdmin:  profile?.role === 'admin',
+    role:     profile?.role     ?? session.user.user_metadata?.role ?? 'customer',
+    fullName: profile?.full_name ?? session.user.user_metadata?.full_name ?? '',
+    isAdmin:  (profile?.role ?? session.user.user_metadata?.role) === 'admin',
   };
 }
 
@@ -51,12 +50,17 @@ export async function logout() {
   window.location.href = '/login.html';
 }
 
-/**
- * 路由守卫：未登录跳转到登录页。
- * 本地未配置时：直接返回 null，不跳转，页面自行处理。
- */
+// AUTH-03: reset password
+export async function resetPassword(email) {
+  if (!supabase) throw new Error('Supabase not configured.');
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/login.html',
+  });
+  if (error) throw error;
+}
+
 export async function requireAuth(redirectTo = '/login.html') {
-  if (!isConfigured()) return null; // 本地调试：跳过守卫
+  if (!isConfigured()) return null;
   const session = await getSession();
   if (!session) {
     const next = location.pathname + location.search;
@@ -66,12 +70,8 @@ export async function requireAuth(redirectTo = '/login.html') {
   return session;
 }
 
-/**
- * 路由守卫：非管理员跳转到首页。
- * 本地未配置时：跳过守卫。
- */
 export async function requireAdmin() {
-  if (!isConfigured()) return null; // 本地调试：跳过守卫
+  if (!isConfigured()) return null;
   const user = await getCurrentUser();
   if (!user || !user.isAdmin) {
     window.location.href = '/';
@@ -80,15 +80,10 @@ export async function requireAdmin() {
   return user;
 }
 
-/**
- * 更新导航栏登录状态。
- * 本地未配置时：显示"Dev mode"提示。
- */
 export async function updateNav() {
   const el = document.getElementById('nav-auth');
   if (!el) return;
 
-  // 未配置时：不显示任何内容（移除 DEV MODE）
   if (!isConfigured()) {
     el.innerHTML = `<a href="/login.html">Sign in</a>`;
     return;
@@ -101,5 +96,21 @@ export async function updateNav() {
       : `<a href="/account.html">My orders</a><a href="#" class="nav-sep" onclick="import('/js/auth.js').then(m => m.logout())">Sign out</a>`;
   } else {
     el.innerHTML = `<a href="/login.html">Sign in</a>`;
+  }
+
+  // NAV-01: mobile menu auth links
+  const mobileAuth = document.getElementById('mobile-auth-links');
+  if (mobileAuth) {
+    const linkStyle = `font-size:22px;font-family:'Cormorant Garamond',Georgia,serif;color:var(--ink2)`;
+    if (user) {
+      mobileAuth.innerHTML = user.isAdmin
+        ? `<a href="/admin/" style="${linkStyle}" onclick="closeMobile()">Admin</a>
+           <a href="#" style="${linkStyle}" onclick="import('/js/auth.js').then(m=>m.logout())">Sign out</a>`
+        : `<a href="/account.html" style="${linkStyle}" onclick="closeMobile()">My orders</a>
+           <a href="#" style="${linkStyle}" onclick="import('/js/auth.js').then(m=>m.logout())">Sign out</a>`;
+    } else {
+      mobileAuth.innerHTML =
+        `<a href="/login.html" style="${linkStyle}" onclick="closeMobile()">Sign in</a>`;
+    }
   }
 }

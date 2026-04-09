@@ -9,11 +9,18 @@
 <link rel="stylesheet" href="/css/layout.css">
 <style>
 .checkout-wrap { max-width: 580px; margin: 0 auto; padding: 40px 22px 80px; }
-.step-bar { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 48px; }
-.s-dot { height: 3px; background: var(--border); position: relative; transition: background .3s; }
-.s-dot.done   { background: var(--gold); }
-.s-dot.active { background: var(--gold-l); }
-.s-dot::after { content: attr(data-label); position: absolute; top: 10px; left: 0; font-size: 10px; color: var(--muted); letter-spacing: .08em; white-space: nowrap; }
+.step-bar  { display:flex; align-items:center; margin-bottom:48px; }
+.s-step    { display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0; }
+.s-circle  { width:28px; height:28px; border-radius:50%; border:.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--muted); background:var(--cream); transition:all .3s; }
+.s-lbl     { font-size:10px; letter-spacing:.08em; color:var(--muted); white-space:nowrap; }
+.s-line    { flex:1; height:.5px; background:var(--border); margin:0 6px; margin-bottom:20px; transition:background .3s; }
+.s-step.active .s-circle { background:var(--ink2); color:var(--cream); border-color:var(--ink2); }
+.s-step.active .s-lbl    { color:var(--ink2); }
+.s-step.done .s-circle   { background:var(--gold); color:var(--cream); border-color:var(--gold); font-size:0; }
+.s-step.done .s-circle::after { content:'✓'; font-size:11px; }
+.s-step.done .s-lbl      { color:var(--gold); }
+.s-step.done + .s-line   { background:var(--gold); }
+@media(max-width:600px) { .f-row button { width:100%; } }
 .step-panel { display: none; }
 .step-panel.active { display: block; }
 .upload-zone { border: .5px dashed var(--gold-l); padding: 40px; text-align: center; cursor: pointer; background: var(--cream2); transition: background .2s; }
@@ -31,6 +38,7 @@
     </svg>
     <span class="logo-text">LUNASTITCH</span>
   </a>
+  <a href="javascript:history.back()" style="font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">← Back</a>
   <div class="nav-links"><span id="nav-auth"></span></div>
 </nav>
 
@@ -38,25 +46,29 @@
   <div class="checkout-wrap">
     <h2 style="font-size:28px;margin-bottom:28px">Place your order</h2>
     <div class="step-bar">
-      <div class="s-dot active" data-label="Upload photo" id="dot1"></div>
-      <div class="s-dot"        data-label="Your details" id="dot2"></div>
-      <div class="s-dot"        data-label="Payment"      id="dot3"></div>
+      <div class="s-step active" id="dot1"><div class="s-circle">1</div><div class="s-lbl">Upload photo</div></div>
+      <div class="s-line"></div>
+      <div class="s-step" id="dot2"><div class="s-circle">2</div><div class="s-lbl">Your details</div></div>
+      <div class="s-line"></div>
+      <div class="s-step" id="dot3"><div class="s-circle">3</div><div class="s-lbl">Payment</div></div>
     </div>
 
     <!-- Step 1: Upload photo -->
     <div class="step-panel active" id="panel1">
       <h3 style="font-size:20px;margin-bottom:8px">Upload your photo</h3>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:24px;line-height:1.8">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.8">
         Clear, front-facing photos work best. JPG, PNG, or HEIC. Max 10 MB.
       </p>
       <div class="upload-zone" onclick="document.getElementById('photo-input').click()">
         <div style="font-size:11px;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;margin-bottom:8px">
           Click to select photo</div>
         <div style="font-size:12px;color:var(--muted)">or drag and drop here</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:8px;letter-spacing:.06em">JPG · PNG · HEIC · Max 10 MB</div>
       </div>
       <input type="file" id="photo-input" accept="image/*" style="display:none"
         onchange="handlePhotoUpload(this)">
       <img id="photo-preview" alt="preview">
+      <div id="reselect-wrap" style="display:none;text-align:center;margin-top:8px"><button type="button" class="btn-ghost btn-sm" onclick="document.getElementById('photo-input').click()">Change photo</button></div>
       <div id="step1-alert"></div>
       <div style="margin-top:20px;display:flex;gap:10px">
         <button class="btn-dark" id="upload-btn"
@@ -69,6 +81,7 @@
     <!-- Step 2: Details -->
     <div class="step-panel" id="panel2">
       <h3 style="font-size:20px;margin-bottom:20px">Your details</h3>
+      <div id="order-summary" style="background:var(--cream2);border:.5px solid var(--border);padding:12px 16px;margin-bottom:20px;font-size:13px;color:var(--ink2);display:none"></div>
       <form onsubmit="submitDetails(event)">
         <div class="f-group">
           <label class="f-label">Subject name (pet name, person's name, etc.)</label>
@@ -80,9 +93,9 @@
             placeholder="Style, occasion, anything that will help us…"></textarea>
         </div>
         <div id="step2-alert"></div>
-        <div style="display:flex;gap:10px;margin-top:8px">
+        <div class="f-row" style="margin-top:8px">
           <button type="button" class="btn-ghost" onclick="showStep(1)">← Back</button>
-          <button type="submit"  class="btn-dark">Continue to payment →</button>
+          <button type="submit" class="btn-dark">Continue →</button>
         </div>
       </form>
     </div>
@@ -90,13 +103,16 @@
     <!-- Step 3: Payment -->
     <div class="step-panel" id="panel3">
       <h3 style="font-size:20px;margin-bottom:8px">Payment</h3>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:24px;line-height:1.8">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.8">
         You'll be redirected to Stripe's secure checkout page.
         Once payment is confirmed we'll email you within 1 business day.
       </p>
-      <div class="alert alert-info" style="margin-bottom:24px">
-        ⚠️ 本地调试：点击"Pay now"会弹出 DEV 提示。
-        正式上线后需在 <code>js/config.js</code> 填入 Stripe Key 并部署 Edge Function。
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px;font-size:11px;color:var(--muted)">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="1" y="5" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width=".8"/>
+          <path d="M4 5V3.5a3 3 0 016 0V5" stroke="currentColor" stroke-width=".8" fill="none"/>
+        </svg>
+        Secured by Stripe. We never store your card details.
       </div>
       <div id="step3-alert"></div>
       <div style="display:flex;gap:10px">

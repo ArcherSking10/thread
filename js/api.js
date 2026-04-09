@@ -6,6 +6,7 @@ import { isConfigured, CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET, CHECKOUT
 const MOCK_PRODUCTS = [
   {
     id: 'pet',
+    badge: 'Most popular',
     name: 'Pet portrait',
     tagline: 'Your pet in refined satin stitch with a quiet eastern touch.',
     hero_url: '',
@@ -62,13 +63,13 @@ export async function getProducts() {
 export async function getProduct(slug) {
   if (!isConfigured()) {
     const p = MOCK_PRODUCTS.find(p => p.id === slug);
-    if (!p) throw new Error('Product not found');
+    if (!p) throw new Error('Product not found: ' + slug);
     return p;
   }
   const { data, error } = await supabase
     .from('products').select('*').eq('slug', slug).single();
-  if (error) throw error;
-  return data;
+  if (error) throw new Error('Product not found: ' + slug);
+  return { ...data, editions: data.editions || [] };
 }
 
 export async function updateProduct(id, fields) {
@@ -93,9 +94,9 @@ export async function createOrder(data) {
 }
 
 export async function getUserOrders(userId) {
-  if (!isConfigured()) return []; // 本地无订单
+  if (!isConfigured()) return [];
   const { data, error } = await supabase.from('orders')
-    .select('*')
+    .select('*, product:product_slug(name)')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
   if (error) throw error;

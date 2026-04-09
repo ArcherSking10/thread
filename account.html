@@ -14,6 +14,8 @@
   <button class="m-close" onclick="closeMobile()">✕</button>
   <a href="/" onclick="closeMobile()">Home</a>
   <a href="/#collections" onclick="closeMobile()">Collections</a>
+  <div style="width:32px;height:.5px;background:var(--border)"></div>
+  <div id="mobile-auth-links"></div>
 </div>
 
 <nav class="site-nav" id="navbar">
@@ -36,11 +38,14 @@
 
 <div class="page-wrap">
   <section class="sec">
-    <div style="margin-bottom:32px">
-      <div class="s-label">Your account</div>
-      <h2 id="user-name" style="margin-bottom:0">—</h2>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px">
+      <div>
+        <div class="s-label">Your account</div>
+        <h2 id="user-name" style="margin-bottom:0">—</h2>
+      </div>
+      <button class="btn-ghost btn-sm" onclick="import('/js/auth.js').then(m => m.logout())">Sign out</button>
     </div>
-    <div id="orders-list"><div class="spinner"></div></div>
+    <div id="orders-list"></div>
   </section>
 </div>
 
@@ -68,7 +73,7 @@
     </ul>
   </div>
   <div class="f-bottom">
-    <span class="f-copy">© 2025 Lunastitch. All rights reserved.</span>
+    <span class="f-copy">© <span id="footer-year"></span> Lunastitch. All rights reserved.</span>
     <span class="f-copy">hello@lunastitch.com</span>
   </div>
 </footer>
@@ -76,6 +81,7 @@
 <script>
 window.addEventListener('scroll', () =>
   document.getElementById('navbar').classList.toggle('scrolled', scrollY > 40));
+document.getElementById('footer-year').textContent = new Date().getFullYear();
 function openMobile()  { document.getElementById('mobileMenu').classList.add('open');    document.body.style.overflow = 'hidden'; }
 function closeMobile() { document.getElementById('mobileMenu').classList.remove('open'); document.body.style.overflow = ''; }
 </script>

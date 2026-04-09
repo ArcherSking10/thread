@@ -12,8 +12,7 @@
 
 <nav class="site-nav">
   <a href="/" class="logo-mark"><span class="logo-text">LUNASTITCH</span></a>
-  <span style="font-size:10px;color:var(--gold);letter-spacing:.2em">ADMIN</span>
-  <button class="btn-ghost btn-sm" onclick="logout()">Sign out</button>
+  <a href="#" onclick="logout()" class="nav-signout">Sign out</a>
 </nav>
 
 <div class="admin-layout">
@@ -26,8 +25,8 @@
   <main class="admin-main">
     <div class="admin-title">Products</div>
     <p style="font-size:12px;color:var(--muted);margin-bottom:28px;line-height:1.8">
-      在这里修改产品文案、图片和价格。Stripe Price ID 必须与 Stripe Dashboard 中的产品一致。<br>
-      本地调试时编辑操作会输出到控制台（Console）而不会真实保存。
+      Edit product copy, images, and pricing here. Stripe Price IDs must match
+      your Stripe Dashboard exactly. Changes are saved to Supabase immediately when live.
     </p>
     <div id="products-editor"><div class="spinner"></div></div>
   </main>
@@ -40,4 +39,3 @@
 <script type="module" src="/js/admin.js"></script>
 </body>
 </html>
-

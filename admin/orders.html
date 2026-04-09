@@ -12,8 +12,7 @@
 
 <nav class="site-nav">
   <a href="/" class="logo-mark"><span class="logo-text">LUNASTITCH</span></a>
-  <span style="font-size:10px;color:var(--gold);letter-spacing:.2em">ADMIN</span>
-  <button class="btn-ghost btn-sm" onclick="logout()">Sign out</button>
+  <a href="#" onclick="logout()" class="nav-signout">Sign out</a>
 </nav>
 
 <div class="admin-layout">
@@ -71,11 +70,12 @@
   if (!isConfigured()) {
     document.getElementById('orders-tbody').innerHTML =
       `<tr><td colspan="8" style="padding:32px">
-        <div class="alert alert-info">本地调试模式 — 填写 js/config.js 后可看到真实订单。</div>
+        <div class="alert alert-info">Configure Supabase in js/config.js to view orders.</div>
       </td></tr>`;
     document.getElementById('status-filter').disabled = true;
+  } else {
+    import('/js/admin.js');
   }
 </script>
-<script type="module" src="/js/admin.js"></script>
 </body>
 </html>

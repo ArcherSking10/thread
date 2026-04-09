@@ -10,7 +10,7 @@
 <style>
 .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--cream2); padding: 24px; }
 .login-card { background: var(--cream); border: .5px solid var(--border); padding: 48px 40px; width: 100%; max-width: 400px; }
-.login-logo { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; letter-spacing: .2em; margin-bottom: 32px; text-align: center; color: var(--ink2); }
+.login-logo { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; letter-spacing: .2em; margin-bottom: 16px; text-align: center; color: var(--ink2); }
 .ltabs { display: flex; border-bottom: .5px solid var(--border); margin-bottom: 28px; }
 .ltab  { flex: 1; padding: 10px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; background: none; border: none; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; transition: all .2s; }
 .ltab.active { color: var(--gold); border-bottom-color: var(--gold); }
@@ -20,22 +20,21 @@
 <div class="login-wrap">
   <div class="login-card">
     <div class="login-logo">LUNASTITCH</div>
-
-    <!-- DEV MODE 提示（Supabase 未配置时显示） -->
-    <div id="dev-banner" style="display:none" class="alert alert-info">
-      <strong>本地调试模式</strong><br>
-      Supabase 未配置，登录功能不可用。<br>
-      填写 <code>js/config.js</code> 后即可启用。<br><br>
-      <a href="/" style="color:var(--gold)">← 返回首页继续预览</a>
+    <div style="text-align:center;margin-bottom:24px">
+      <a href="/" style="font-size:11px;color:var(--muted);letter-spacing:.12em">← Back to site</a>
     </div>
-
+    <div id="dev-banner" style="display:none" class="alert alert-info">
+      <strong>Local dev mode</strong><br>
+      Supabase is not configured. Login is unavailable.<br>
+      Fill in <code>js/config.js</code> to enable.<br><br>
+      <a href="/" style="color:var(--gold)">← Back to site</a>
+    </div>
     <div id="login-content">
       <div class="ltabs">
         <button class="ltab active" onclick="switchTab('login',  this)">Sign in</button>
         <button class="ltab"        onclick="switchTab('signup', this)">Create account</button>
       </div>
       <div id="alert-box"></div>
-
       <div id="panel-login">
         <form onsubmit="handleLogin(event)">
           <div class="f-group">
@@ -46,10 +45,12 @@
             <label class="f-label">Password</label>
             <input class="f-input" type="password" id="login-pass" required placeholder="Your password">
           </div>
+          <div style="text-align:right;margin-bottom:12px">
+            <a href="#" onclick="handleForgot(event)" style="font-size:11px;color:var(--muted)">Forgot password?</a>
+          </div>
           <button class="btn-dark" type="submit" style="width:100%;margin-top:8px">Sign in</button>
         </form>
       </div>
-
       <div id="panel-signup" style="display:none">
         <form onsubmit="handleSignup(event)">
           <div class="f-group">
@@ -70,19 +71,16 @@
     </div>
   </div>
 </div>
-
 <script type="module">
-  import { login, signUp, getSession } from '/js/auth.js';
+  import { login, signUp, getSession, resetPassword } from '/js/auth.js';
   import { isConfigured } from '/js/config.js';
 
-  // 未配置时：显示 DEV MODE 提示，隐藏登录表单
   if (!isConfigured()) {
     document.getElementById('dev-banner').style.display = 'block';
     document.getElementById('login-content').style.display = 'none';
   } else {
-    // 已配置：已登录则跳转
     const params = new URLSearchParams(location.search);
-    const next   = params.get('next') || '/account.html';
+    const next = params.get('next') || '/account.html';
     getSession().then(s => { if (s) location.href = next; });
   }
 
@@ -92,6 +90,7 @@
   }
 
   window.switchTab = (tab, el) => {
+    document.getElementById('alert-box').innerHTML = '';
     document.querySelectorAll('.ltab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
     document.getElementById('panel-login' ).style.display = tab === 'login'  ? 'block' : 'none';
@@ -100,28 +99,55 @@
 
   window.handleLogin = async e => {
     e.preventDefault();
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true; btn.textContent = 'Signing in…';
     try {
       const params = new URLSearchParams(location.search);
-      const next   = params.get('next') || '/account.html';
-      await login(document.getElementById('login-email').value,
-                  document.getElementById('login-pass').value);
+      const next = params.get('next') || '/account.html';
+      await login(
+        document.getElementById('login-email').value,
+        document.getElementById('login-pass').value
+      );
       location.href = next;
-    } catch (err) { showAlert(err.message); }
+    } catch (err) {
+      btn.disabled = false; btn.textContent = 'Sign in';
+      showAlert(err.message);
+    }
   };
 
   window.handleSignup = async e => {
-  e.preventDefault();
-  try {
-    await signUp(
-      document.getElementById('signup-email').value,
-      document.getElementById('signup-pass').value,
-      document.getElementById('signup-name').value
-    );
-    // 注册成功后直接切换到 Sign in 页，带成功提示
-    switchTab('login', document.querySelector('.ltab'));
-    showAlert('Account created! Please sign in.', 'success');
-  } catch (err) { showAlert(err.message); }
-};
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true; btn.textContent = 'Creating account…';
+    try {
+      await signUp(
+        document.getElementById('signup-email').value,
+        document.getElementById('signup-pass').value,
+        document.getElementById('signup-name').value
+      );
+      document.getElementById('panel-signup').innerHTML = `
+        <div class="alert alert-success" style="margin-bottom:0">
+          <strong>Check your inbox</strong><br>
+          We sent a verification link to your email. Click it to activate
+          your account, then come back to sign in.
+        </div>`;
+      document.querySelectorAll('.ltab').forEach((t, i) =>
+        t.classList.toggle('active', i === 0));
+    } catch (err) {
+      btn.disabled = false; btn.textContent = 'Create account';
+      showAlert(err.message);
+    }
+  };
+
+  window.handleForgot = async e => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    if (!email) { showAlert('Enter your email above first.'); return; }
+    try {
+      await resetPassword(email);
+      showAlert('Password reset email sent. Check your inbox.', 'success');
+    } catch (err) { showAlert(err.message); }
+  };
 </script>
 </body>
 </html>

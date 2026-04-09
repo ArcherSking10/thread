@@ -10,21 +10,33 @@ const STATUS_LABEL = {
 
 async function init() {
   updateNav();
-  await requireAuth();
+  // AUTH-05: await requireAuth before showing spinner
+  const session = await requireAuth();
+  if (!session) return;
+  document.getElementById("orders-list").innerHTML = '<div class="spinner"></div>';
   try {
     const user = await getCurrentUser();
     document.getElementById("user-name").textContent = user.fullName || user.email;
     const orders = await getUserOrders(user.id);
     const c = document.getElementById("orders-list");
     if (!orders.length) {
-      c.innerHTML = "<p style='color:var(--muted);font-size:13px'>No orders yet. <a href='/' style='color:var(--gold)'>Start here</a></p>";
+      // UI-05: better empty state
+      c.innerHTML = `
+        <div style="padding:48px 0;text-align:center;border:.5px solid var(--border)">
+          <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;
+            color:var(--ink2);margin-bottom:10px">No orders yet</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.8">
+            Your custom keepsakes will appear here once you place an order.
+          </p>
+          <a href="/#collections" class="btn-dark" style="display:inline-block">
+            Browse collections
+          </a>
+        </div>`;
       return;
     }
     c.innerHTML = orders.map(o => {
       const label = STATUS_LABEL[o.status] || o.status;
-      // use product_slug (text FK) since orders doesn't join products
-      const slugNames = { pet: 'Pet portrait', couple: 'Couple portrait', name: 'Name art', family: 'Family keepsake' };
-      const name = slugNames[o.product_slug] || o.product_slug || "Order";
+      const name = o.product?.name || o.product_slug || 'Order';
       const date = new Date(o.created_at).toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
       let html = `<div class="card" style="margin-bottom:16px" id="order-${o.id}">`;
       html += `<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">`;

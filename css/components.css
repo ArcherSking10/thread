@@ -19,7 +19,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .badge-shipped{background:#D4E8D4;color:#2A6A2A}
 .badge-complete{background:#E8E4D8;color:var(--ink2)}
 .badge-revision_requested{background:#F0E0D0;color:#884020}
-.alert{padding:14px 18px;font-size:13px;margin-bottom:18px;line-height:1.7}
+.alert{padding:14px 18px;font-size:14px;margin-bottom:18px;line-height:1.7}
 .alert-success{background:#EAF4EA;color:var(--success);border:.5px solid var(--success)}
 .alert-error{background:#F4EAEA;color:var(--danger);border:.5px solid var(--danger)}
 .alert-info{background:var(--gold-p);color:var(--ink2);border:.5px solid var(--gold-l)}
@@ -37,3 +37,6 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .s-label::after{content:'';flex:0 0 36px;height:.5px;background:var(--gold-l)}
 .eyebrow{font-size:10px;letter-spacing:.24em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px}
 .eyebrow::before,.eyebrow::after{content:'';flex:0 0 20px;height:.5px;background:var(--gold-l)}
+
+.btn-dark:focus-visible  { outline: 2px solid var(--gold); outline-offset: 2px; }
+.btn-ghost:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }

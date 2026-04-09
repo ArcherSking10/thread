@@ -15,12 +15,12 @@
 .hero-left::after  { content:''; position:absolute; bottom:40px; right:28px; width:26px; height:26px; border-bottom:1px solid var(--gold-l); border-right:1px solid var(--gold-l); }
 .hero h1 { font-size: 50px; line-height: 1.15; color: var(--ink2); margin-bottom: 22px; }
 .hero h1 em { font-style: italic; color: var(--gold); }
-.hero-sub { font-size: 13px; line-height: 1.9; color: var(--muted); margin-bottom: 36px; max-width: 340px; }
+.hero-sub { font-size: 14px; line-height: 1.7; color: var(--muted); margin-bottom: 36px; max-width: 340px; }
 .hero-right { background: var(--cream2); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .hero-right::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(154,125,82,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(154,125,82,.06) 1px,transparent 1px); background-size:32px 32px; }
 
 /* Nav 对齐修复 */
-.nav-links a { font-size: 10px; letter-spacing: .16em; color: var(--muted); text-transform: uppercase; transition: color .2s; line-height: 1; vertical-align: middle; }
+.nav-links a { font-size: 11px; letter-spacing: .16em; color: var(--muted); text-transform: uppercase; transition: color .2s; line-height: 1; vertical-align: middle; }
 .nav-links a:hover { color: var(--gold); }
 #nav-auth { display: inline-flex; align-items: center; gap: 20px; }
 
@@ -28,12 +28,12 @@
 .products-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); border: .5px solid var(--border); }
 .product-card { background: var(--cream); cursor: pointer; transition: background .2s; position: relative; overflow: hidden; }
 .product-card:hover { background: var(--gold-p); }
-.product-card-hint { position: absolute; bottom: 0; left: 0; right: 0; background: var(--ink2); color: var(--cream); font-size: 9px; letter-spacing: .18em; text-transform: uppercase; text-align: center; padding: 8px; opacity: 0; transform: translateY(100%); transition: opacity .2s, transform .2s; }
+.product-card-hint { position: absolute; bottom: 0; left: 0; right: 0; background: var(--ink2); color: var(--cream); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; text-align: center; padding: 8px; opacity: 0; transform: translateY(100%); transition: opacity .2s, transform .2s; }
 .product-card:hover .product-card-hint { opacity: 1; transform: translateY(0); }
 .product-thumb { height: 180px; display: flex; align-items: center; justify-content: center; }
 .p-pet{background:#EDE5D6} .p-couple{background:#E4EDE5} .p-name{background:#E5E4ED} .p-family{background:#EDE5E4}
 .product-info { padding: 16px 18px 20px; border-top: .5px solid var(--border2); }
-.product-badge { display:inline-block; font-size:9px; letter-spacing:.14em; padding:3px 9px; background:var(--ink2); color:var(--cream); text-transform:uppercase; margin-bottom:8px; }
+.product-badge { display:inline-block; font-size:10px; letter-spacing:.14em; padding:3px 9px; background:var(--ink2); color:var(--cream); text-transform:uppercase; margin-bottom:8px; }
 .product-name  { font-family:'Cormorant Garamond',Georgia,serif; font-size:17px; color:var(--ink2); margin-bottom:4px; }
 .product-price { font-size:11px; color:var(--gold); margin-bottom:8px; }
 
@@ -43,7 +43,7 @@
 .step:last-child { border-right: none; }
 .step-num   { font-family:'Cormorant Garamond',Georgia,serif; font-size:44px; font-weight:300; color:var(--gold-p); line-height:1; margin-bottom:16px; }
 .step-title { font-size:13px; font-weight:500; color:var(--ink2); margin-bottom:8px; }
-.step-desc  { font-size:12px; color:var(--muted); line-height:1.9; }
+.step-desc  { font-size:13px; color:var(--muted); line-height:1.6; }
 
 /* Gallery */
 .gallery-grid { display:grid; grid-template-columns:2fr 1fr 1fr; grid-template-rows:200px 200px; gap:1px; background:var(--border); }
@@ -58,7 +58,7 @@
 .p-tier    { font-family:'Cormorant Garamond',Georgia,serif; font-size:20px; color:var(--ink2); margin-bottom:4px; }
 .p-sub     { font-size:11px; color:var(--muted); margin-bottom:22px; }
 .p-divider { height:.5px; background:var(--border); margin-bottom:14px; }
-.p-row     { display:flex; justify-content:space-between; font-size:12px; padding:8px 0; border-bottom:.5px solid var(--border2); }
+.p-row     { display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:.5px solid var(--border2); }
 .p-row:last-child { border-bottom:none; }
 .p-row span:last-child { font-family:'Cormorant Garamond',Georgia,serif; font-size:15px; color:var(--gold); }
 
@@ -67,7 +67,7 @@
 .faq-btn  { width:100%; background:none; border:none; text-align:left; padding:20px 0; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--ink2); font-family:'Inter',sans-serif; }
 .faq-btn::after { content:'+'; font-size:18px; color:var(--gold-l); transition:transform .3s; }
 .faq-item.open .faq-btn::after { transform:rotate(45deg); }
-.faq-answer { font-size:12px; color:var(--muted); line-height:1.9; padding-bottom:20px; display:none; }
+.faq-answer { font-size:13px; color:var(--muted); line-height:1.6; padding-bottom:20px; display:none; }
 .faq-item.open .faq-answer { display:block; }
 
 /* Responsive */
@@ -97,6 +97,8 @@
   <a href="/#process" onclick="closeMobile()">Process</a>
   <a href="/#gallery" onclick="closeMobile()">Gallery</a>
   <a href="/#pricing" onclick="closeMobile()">Pricing</a>
+  <div style="width:32px;height:.5px;background:var(--border)"></div>
+  <div id="mobile-auth-links"></div>
 </div>
 
 <!-- 导航栏 -->
@@ -119,7 +121,7 @@
     <a href="/#pricing">Pricing</a>
     <span id="nav-auth"></span>
   </div>
-  <a href="/#inquire" class="nav-cta">Request a piece</a>
+  <a href="/#inquire" class="nav-cta">Get in touch</a>
   <button class="hamburger" onclick="openMobile()">
     <span></span><span></span><span></span>
   </button>
@@ -134,7 +136,7 @@
     <h1>Your photo,<br>stitched into<br><em>something lasting.</em></h1>
     <p class="hero-sub">Photo-inspired embroidery gifts with a quiet eastern aesthetic. Made to order, one at a time.</p>
     <div style="display:flex;gap:12px;flex-wrap:wrap">
-      <button class="btn-dark" onclick="document.querySelector('#inquire').scrollIntoView({behavior:'smooth'})">Request a piece</button>
+      <button class="btn-dark" onclick="document.querySelector('#collections').scrollIntoView({behavior:'smooth'})">Shop now</button>
       <button class="btn-ghost" onclick="document.querySelector('#gallery').scrollIntoView({behavior:'smooth'})">View gallery</button>
     </div>
   </div>
@@ -191,78 +193,9 @@
 <section class="sec" id="collections">
   <div class="s-label">What we make</div>
   <h2 style="margin-bottom:8px">Four keepsake templates</h2>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:36px;max-width:500px;line-height:1.9">Each piece starts from your photo. Click any template for details and to place an order.</p>
-  <div class="products-grid">
-    <div class="product-card" onclick="location.href='/product.html?id=pet'">
-      <div class="product-thumb p-pet">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-          <circle cx="40" cy="40" r="34" stroke="#C4A882" stroke-width=".7" stroke-dasharray="2 5"/>
-          <circle cx="40" cy="33" r="13" fill="#C8B49A" opacity=".45"/>
-          <circle cx="40" cy="33" r="13" fill="none" stroke="#9A7D52" stroke-width=".6" stroke-dasharray="1.5 2"/>
-          <ellipse cx="34" cy="25" rx="6" ry="9" fill="#B8A48C" opacity=".5" transform="rotate(-15 34 25)"/>
-          <ellipse cx="46" cy="25" rx="6" ry="9" fill="#B8A48C" opacity=".5" transform="rotate(15 46 25)"/>
-          <circle cx="36" cy="32" r="2.5" fill="#2E2820" opacity=".65"/>
-          <circle cx="44" cy="32" r="2.5" fill="#2E2820" opacity=".65"/>
-          <ellipse cx="40" cy="54" rx="17" ry="12" fill="#C8B49A" opacity=".38"/>
-        </svg>
-      </div>
-      <div class="product-info">
-        <div class="product-badge">Most popular</div>
-        <div class="product-name">Pet portrait</div>
-        <div class="product-price">From $69 &middot; Standard &amp; Framed</div>
-      </div>
-      <div class="product-card-hint">View details →</div>
-    </div>
-    <div class="product-card" onclick="location.href='/product.html?id=couple'">
-      <div class="product-thumb p-couple">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-          <circle cx="40" cy="40" r="34" stroke="#C4A882" stroke-width=".7" stroke-dasharray="2 5"/>
-          <circle cx="27" cy="33" r="11" fill="#C8B49A" opacity=".45"/>
-          <circle cx="27" cy="33" r="11" fill="none" stroke="#9A7D52" stroke-width=".6" stroke-dasharray="1.5 2"/>
-          <circle cx="53" cy="33" r="11" fill="#C8B49A" opacity=".45"/>
-          <circle cx="53" cy="33" r="11" fill="none" stroke="#9A7D52" stroke-width=".6" stroke-dasharray="1.5 2"/>
-          <ellipse cx="40" cy="56" rx="20" ry="10" fill="#C8B49A" opacity=".3"/>
-          <path d="M26 62 Q40 68 54 62" stroke="#C4A882" stroke-width=".7" fill="none"/>
-        </svg>
-      </div>
-      <div class="product-info">
-        <div class="product-name">Couple portrait</div>
-        <div class="product-price">From $89 &middot; Standard &amp; Framed</div>
-      </div>
-      <div class="product-card-hint">View details →</div>
-    </div>
-    <div class="product-card" onclick="location.href='/product.html?id=name'">
-      <div class="product-thumb p-name">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-          <circle cx="40" cy="40" r="34" stroke="#C4A882" stroke-width=".7" stroke-dasharray="2 5"/>
-          <rect x="18" y="18" width="44" height="44" fill="none" stroke="#9A7D52" stroke-width=".6" stroke-dasharray="2 3"/>
-          <text x="40" y="52" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#9A7D52" opacity=".5">M</text>
-          <circle cx="62" cy="20" r="5" fill="#D4C0A8" opacity=".7"/>
-          <circle cx="18" cy="62" r="4" fill="#D4C0A8" opacity=".6"/>
-        </svg>
-      </div>
-      <div class="product-info">
-        <div class="product-name">Name art</div>
-        <div class="product-price">From $39 &middot; Standard &amp; Framed</div>
-      </div>
-      <div class="product-card-hint">View details →</div>
-    </div>
-    <div class="product-card" onclick="location.href='/product.html?id=family'">
-      <div class="product-thumb p-family">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-          <circle cx="40" cy="40" r="34" stroke="#C4A882" stroke-width=".7" stroke-dasharray="2 5"/>
-          <circle cx="24" cy="33" r="9"  fill="#C8B49A" opacity=".42"/>
-          <circle cx="40" cy="29" r="11" fill="#C8B49A" opacity=".48"/>
-          <circle cx="56" cy="33" r="9"  fill="#C8B49A" opacity=".42"/>
-          <ellipse cx="40" cy="56" rx="24" ry="10" fill="#C8B49A" opacity=".28"/>
-        </svg>
-      </div>
-      <div class="product-info">
-        <div class="product-name">Family keepsake</div>
-        <div class="product-price">From $149 &middot; Custom request</div>
-      </div>
-      <div class="product-card-hint">View details →</div>
-    </div>
+  <p style="font-size:14px;color:var(--muted);margin-bottom:36px;max-width:500px;line-height:1.7">Each piece begins with a photo you love. Choose a template to see options and pricing.</p>
+  <div class="products-grid" id="products-grid">
+    <div style="grid-column:1/-1;text-align:center;padding:40px 0"><div class="spinner"></div></div>
   </div>
 </section>
 
@@ -271,7 +204,7 @@
 <section class="sec sec-alt" id="process">
   <div class="s-label">How it works</div>
   <h2 style="margin-bottom:8px">Simple from start to finish</h2>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:36px;line-height:1.9">You approve the design before a single stitch begins.</p>
+  <p style="font-size:14px;color:var(--muted);margin-bottom:36px;line-height:1.7">You approve the design before a single stitch begins.</p>
   <div class="steps">
     <div class="step">
       <div class="step-num">一</div>
@@ -286,7 +219,7 @@
     <div class="step">
       <div class="step-num">三</div>
       <div class="step-title">Receive your keepsake</div>
-      <div class="step-desc">Gift-ready packaging. US delivery 2–5 days after production ships.</div>
+      <div class="step-desc">Gift-ready packaging included. Total time: 12–19 days from order confirmation.</div>
     </div>
   </div>
 </section>
@@ -384,6 +317,9 @@
       </svg>
     </div>
   </div>
+  <p style="font-size:11px;color:var(--muted);margin-top:16px;text-align:center;letter-spacing:.08em">
+    Illustrations shown. Real embroidered pieces will be displayed here at launch.
+  </p>
 </section>
 
 <!-- PRICING -->
@@ -391,7 +327,7 @@
 <section class="sec sec-alt" id="pricing">
   <div class="s-label">Two editions</div>
   <h2 style="margin-bottom:8px">Standard &amp; Framed Signature</h2>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:36px;line-height:1.9">Standard for everyday gifting. Framed for something wall-ready and lasting.</p>
+  <p style="font-size:14px;color:var(--muted);margin-bottom:36px;line-height:1.7">Standard for everyday gifting. Framed for something wall-ready and lasting.</p>
   <div class="pricing-grid">
     <div class="p-card">
       <div class="p-tier">Standard edition</div>
@@ -440,6 +376,10 @@
       <button class="faq-btn" onclick="toggleFaq(this)">Do you ship internationally?</button>
       <div class="faq-answer">Currently US domestic only. Contact us for international requests.</div>
     </div>
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">What determines the price within each range?</button>
+      <div class="faq-answer">Price varies by the number of subjects, level of detail, and any custom background elements. We'll confirm the exact price when we review your photo — before any payment is taken.</div>
+    </div>
   </div>
 </section>
 
@@ -447,8 +387,8 @@
 <div class="div-orn alt"><span>&#9672; Inquire &#9672;</span></div>
 <section class="sec sec-alt" id="inquire">
   <div class="s-label">Get in touch</div>
-  <h2 style="margin-bottom:8px">Request a piece</h2>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:32px;line-height:1.9">Tell us what you have in mind. We reply within one business day.</p>
+  <h2 style="margin-bottom:8px">Have a question?</h2>
+  <p style="font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.7">Not sure which template is right for you? Send us a message and we'll help you figure it out.</p>
   <form style="max-width:520px" onsubmit="handleInquiry(event)">
     <div class="f-row">
       <div class="f-group">
@@ -518,7 +458,7 @@
     </ul>
   </div>
   <div class="f-bottom">
-    <span class="f-copy">© 2025 Lunastitch. All rights reserved.</span>
+    <span class="f-copy">© <span id="footer-year"></span> Lunastitch. All rights reserved.</span>
     <span class="f-copy">hello@lunastitch.com</span>
   </div>
 </footer>
@@ -535,6 +475,8 @@ function toggleFaq(btn) {
   btn.parentElement.classList.toggle('open');
 }
 
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+
 function handleInquiry(e) {
   e.preventDefault();
   const msg = document.getElementById('inquiry-msg');
@@ -543,12 +485,42 @@ function handleInquiry(e) {
   setTimeout(() => {
     msg.innerHTML = '<div class="alert alert-success">Thank you — we\'ll be in touch within 1 business day.</div>';
     e.target.reset();
+    msg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, 800);
 }
 </script>
 <script type="module">
   import { updateNav } from '/js/auth.js';
+  import { getProducts } from '/js/api.js';
+
   updateNav();
+
+  const thumbBg = { pet:'#EDE5D6', couple:'#E4EDE5', name:'#E5E4ED', family:'#EDE5E4' };
+  getProducts().then(products => {
+    document.getElementById('products-grid').innerHTML = products.map(p => {
+      const slug = p.slug || p.id;
+      const fromPrice = p.editions?.[0]?.price_display || '';
+      const editionCount = p.editions?.length || 2;
+      const priceLabel = slug === 'family' ? 'Custom quote' : `${editionCount} editions`;
+      const badge = p.badge ? `<div class="product-badge">${p.badge}</div>` : '';
+      const thumbSvgs = {
+        pet: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="34" stroke="#C4A882" stroke-width=".7" stroke-dasharray="2 5"/><circle cx="40" cy="33" r="13" fill="#C8B49A" opacity=".45"/><circle cx="40" cy="33" r="13" fill="none" stroke="#9A7D52" stroke-width=".6" stroke-dasharray="1.5 2"/><ellipse cx="34" cy="25" rx="6" ry="9" fill="#B8A48C" opacity=".5" transform="rotate(-15 34 25)"/><ellipse cx="46" cy="25" rx="6" ry="9" fill="#B8A48C" opacity=".5" transform="rotate(15 46 25)"/><circle cx="36" cy="32" r="2.5" fill="#2E2820" opacity=".65"/><circle cx="44" cy="32" r="2.5" fill="#2E2820" opacity=".65"/><ellipse cx="40" cy="54" rx="17" ry="12" fill="#C8B49A" opacity=".38"/></svg>`,
+        couple: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="34" stroke="#C4A882" stroke-width=".7" stroke-dasharray="2 5"/><circle cx="27" cy="33" r="11" fill="#C8B49A" opacity=".45"/><circle cx="27" cy="33" r="11" fill="none" stroke="#9A7D52" stroke-width=".6" stroke-dasharray="1.5 2"/><circle cx="53" cy="33" r="11" fill="#C8B49A" opacity=".45"/><circle cx="53" cy="33" r="11" fill="none" stroke="#9A7D52" stroke-width=".6" stroke-dasharray="1.5 2"/><ellipse cx="40" cy="56" rx="20" ry="10" fill="#C8B49A" opacity=".3"/><path d="M26 62 Q40 68 54 62" stroke="#C4A882" stroke-width=".7" fill="none"/></svg>`,
+        name: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="34" stroke="#C4A882" stroke-width=".7" stroke-dasharray="2 5"/><rect x="18" y="18" width="44" height="44" fill="none" stroke="#9A7D52" stroke-width=".6" stroke-dasharray="2 3"/><text x="40" y="52" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#9A7D52" opacity=".5">M</text><circle cx="62" cy="20" r="5" fill="#D4C0A8" opacity=".7"/><circle cx="18" cy="62" r="4" fill="#D4C0A8" opacity=".6"/></svg>`,
+        family: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="34" stroke="#C4A882" stroke-width=".7" stroke-dasharray="2 5"/><circle cx="24" cy="33" r="9" fill="#C8B49A" opacity=".42"/><circle cx="40" cy="29" r="11" fill="#C8B49A" opacity=".48"/><circle cx="56" cy="33" r="9" fill="#C8B49A" opacity=".42"/><ellipse cx="40" cy="56" rx="24" ry="10" fill="#C8B49A" opacity=".28"/></svg>`
+      };
+      const bg = thumbBg[slug] || 'var(--cream2)';
+      return `<div class="product-card" onclick="location.href='/product.html?id=${slug}'">
+        <div class="product-thumb" style="background:${bg};height:180px;display:flex;align-items:center;justify-content:center">${thumbSvgs[slug] || ''}</div>
+        <div class="product-info">
+          ${badge}
+          <div class="product-name">${p.name}</div>
+          <div class="product-price">From ${fromPrice.split('–')[0]} · ${priceLabel}</div>
+        </div>
+        <div class="product-card-hint">View details →</div>
+      </div>`;
+    }).join('');
+  });
 </script>
 </body>
 </html>
