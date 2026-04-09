@@ -89,3 +89,34 @@ INSERT INTO products (slug, name, tagline, sort_order, editions) VALUES
 '[{"label":"Standard","price_display":"$39-59","stripe_price_id":"price_TODO","features":["Name up to 12 chars","1 eastern motif","No photo needed","7-10 days"]},{"label":"Framed Signature","price_display":"$69-89","stripe_price_id":"price_TODO","features":["All Standard features","Full frame","10-14 days"]}]'),
 ('family','Family keepsake','The most meaningful piece we make. Families and groups.',4,
 '[{"label":"Custom Standard","price_display":"$149-189","stripe_price_id":"price_TODO","features":["2-5 subjects","All names + date","14-20 days","Preview approval required"]},{"label":"Custom Framed","price_display":"$179-249","stripe_price_id":"price_TODO","features":["All Custom features","Full frame","Lead time confirmed per order"]}]');
+-- ── site_content：全局配置（视频 URL 等少量 key-value）─────────
+CREATE TABLE site_content (
+  key        text PRIMARY KEY,
+  value      text,
+  label      text,            -- admin 界面显示用的友好名称
+  updated_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE site_content ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "content_public_read" ON site_content FOR SELECT USING (true);
+CREATE POLICY "content_admin_write" ON site_content FOR ALL
+  USING (auth.jwt() ->> 'role' = 'admin');
+
+INSERT INTO site_content (key, value, label) VALUES
+('about_video_url',
+ 'https://res.cloudinary.com/demo/video/upload/f_auto,q_auto/docs/walking_talking.mp4',
+ 'About page video');
+
+-- ── gallery_items：Gallery 作品图（结构化，支持多张排序）────────
+CREATE TABLE gallery_items (
+  id         uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  image_url  text NOT NULL,
+  caption    text,
+  sort_order int DEFAULT 0,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE gallery_items ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "gallery_public_read" ON gallery_items FOR SELECT USING (true);
+CREATE POLICY "gallery_admin_write" ON gallery_items FOR ALL
+  USING (auth.jwt() ->> 'role' = 'admin');

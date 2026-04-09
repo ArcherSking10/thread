@@ -129,7 +129,7 @@ export async function submitPreviewResponse(orderId, action, note = '') {
 
 // ── Cloudinary 上传 ──────────────────────────────────────────
 
-export async function uploadPhoto(file) {
+export async function uploadPhoto(file, folder = 'orders') {
   if (!isConfigured()) {
     // 本地调试：返回 object URL 模拟上传
     return URL.createObjectURL(file);
@@ -137,6 +137,7 @@ export async function uploadPhoto(file) {
   const fd = new FormData();
   fd.append('file', file);
   fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  fd.append('folder', folder);
   const res = await fetch(
     `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
     { method: 'POST', body: fd }
@@ -144,6 +145,11 @@ export async function uploadPhoto(file) {
   const json = await res.json();
   if (!res.ok) throw new Error(json.error?.message || 'Upload failed');
   return json.secure_url;
+}
+
+// Gallery 图片上传，指定独立 folder 与客户订单照片区分
+export async function uploadGalleryImage(file) {
+  return uploadPhoto(file, 'gallery');
 }
 
 // ── Stripe Checkout ──────────────────────────────────────────
@@ -165,4 +171,55 @@ export async function startStripeCheckout(orderId, stripePriceId, customerEmail)
   const { url, error } = await res.json();
   if (error) throw new Error(error);
   window.location.href = url;
+}
+// ── Site Content ──────────────────────────────────────────────
+
+const CONTENT_DEFAULTS = {
+  about_video_url: 'https://res.cloudinary.com/demo/video/upload/f_auto,q_auto/docs/walking_talking.mp4',
+};
+
+export async function getContent(key) {
+  if (!isConfigured()) return CONTENT_DEFAULTS[key] ?? '';
+  const { data } = await supabase
+    .from('site_content').select('value').eq('key', key).maybeSingle();
+  return data?.value ?? CONTENT_DEFAULTS[key] ?? '';
+}
+
+export async function getAllContent() {
+  if (!isConfigured()) return Object.entries(CONTENT_DEFAULTS).map(([key, value]) => ({ key, value, label: key }));
+  const { data, error } = await supabase.from('site_content').select('*').order('key');
+  if (error) throw error;
+  return data;
+}
+
+export async function updateContent(key, value) {
+  if (!isConfigured()) { console.log('[DEV] updateContent', key, value); return; }
+  const { error } = await supabase.from('site_content')
+    .update({ value, updated_at: new Date().toISOString() }).eq('key', key);
+  if (error) throw error;
+}
+
+// ── Gallery Items（固定 5 格，position 1-5 对应首页格子）────────
+
+export async function getGalleryItems() {
+  // 本地 mock：返回 5 个空位，首页保持 SVG 占位
+  if (!isConfigured()) return Array.from({ length: 5 }, (_, i) => ({ position: i + 1, image_url: null, alt_text: null }));
+  const { data, error } = await supabase
+    .from('gallery_items').select('*').order('position');
+  if (error) throw error;
+  return data;
+}
+
+// 更新某个位置的图片（position: 1-5，imageUrl: Cloudinary URL）
+export async function updateGalleryItem(position, imageUrl, altText = '') {
+  if (!isConfigured()) { console.log('[DEV] updateGalleryItem', position, imageUrl); return; }
+  const { error } = await supabase.from('gallery_items')
+    .update({ image_url: imageUrl, alt_text: altText, updated_at: new Date().toISOString() })
+    .eq('position', position);
+  if (error) throw error;
+}
+
+// 清空某个位置
+export async function clearGalleryItem(position) {
+  return updateGalleryItem(position, null, null);
 }

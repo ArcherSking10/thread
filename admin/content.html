@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Content — Lunastitch Admin</title>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/layout.css">
+<style>
+.content-section { margin-bottom: 32px; }
+.section-title { font-size: 13px; font-weight: 500; color: var(--ink2); margin-bottom: 4px; }
+.section-desc  { font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.7; }
+/* Gallery slot */
+.gallery-slot { cursor: pointer; transition: all .15s; }
+.gallery-slot:hover { outline: 2px solid var(--gold-l); outline-offset: -2px; }
+.gallery-slot.uploading { pointer-events: none; opacity: .7; }
+.slot-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.5);
+  display: none;                /* 기본적으로 숨김 */
+  align-items: center; justify-content: center;
+  color: #fff; font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  z-index: 3;
+}
+.gallery-slot.uploading .slot-overlay { display: flex; } /* uploading 클래스일 때만 표시 */
+</style>
+</head>
+<body data-page="content">
+
+<nav class="site-nav">
+  <a href="/" class="logo-mark"><span class="logo-text">LUNASTITCH</span></a>
+  <a href="#" onclick="logout()" class="nav-signout">Sign out</a>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <a href="/admin/">Dashboard</a>
+    <a href="/admin/orders.html">Orders</a>
+    <a href="/admin/products.html">Products</a>
+    <a href="/admin/content.html" class="active">Content</a>
+    <a href="/" target="_blank">View site ↗</a>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-title">Content</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.7">
+      Manage site media and copy. Changes take effect immediately when live.
+    </p>
+
+    <!-- ── About Video ─────────────────────────────────────── -->
+    <div class="card content-section">
+      <div class="section-title">About page video</div>
+      <div class="section-desc">
+        Paste a Cloudinary video URL. Upload your video to Cloudinary first, then copy the URL here.
+      </div>
+      <div class="f-group">
+        <label class="f-label">Video URL</label>
+        <input class="f-input" id="about-video-url" type="url"
+          placeholder="https://res.cloudinary.com/your-cloud/video/upload/...">
+      </div>
+      <div id="video-preview-wrap" style="margin-bottom:16px;display:none">
+        <video id="video-preview" controls
+          style="width:100%;max-height:260px;border:.5px solid var(--border);display:block"></video>
+      </div>
+      <div id="video-alert" style="margin-bottom:12px"></div>
+      <button class="btn-dark btn-sm" onclick="saveVideoUrl()">Save</button>
+    </div>
+
+    <!-- ── Gallery Images ─────────────────────────────────── -->
+    <div class="card content-section">
+      <div class="section-title">Homepage Gallery</div>
+      <div class="section-desc">
+        Click any slot to upload or replace an image. Layout mirrors the homepage Gallery section.
+        Position 1 is the large left panel; positions 2–5 fill the right grid.
+      </div>
+
+      <!-- 5格可视化，镜像首页布局 -->
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:140px 140px;gap:4px;margin-bottom:16px">
+
+        <!-- Position 1：主图，跨两行 -->
+        <div class="gallery-slot" data-position="1"
+          style="grid-row:1/3;background:var(--cream2);border:.5px solid var(--border);
+          display:flex;align-items:center;justify-content:center;
+          position:relative;overflow:hidden" onclick="openSlotUpload(1)">
+          <div class="slot-placeholder-1" style="text-align:center;color:var(--muted)">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">Position 1</div>
+            <div style="font-size:12px">Click to upload</div>
+          </div>
+          <img class="slot-img" style="display:none;width:100%;height:100%;object-fit:cover" alt="">
+          <div class="slot-overlay">Uploading…</div>
+          <button class="slot-clear-btn btn-ghost btn-sm"
+            style="display:none;position:absolute;top:8px;right:8px;font-size:10px;z-index:2"
+            onclick="clearSlot(event,1)">Remove</button>
+        </div>
+
+        <!-- Position 2 -->
+        <div class="gallery-slot" data-position="2"
+          style="background:var(--cream2);border:.5px solid var(--border);
+          display:flex;align-items:center;justify-content:center;
+          position:relative;overflow:hidden" onclick="openSlotUpload(2)">
+          <div class="slot-placeholder-2" style="text-align:center;color:var(--muted)">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">Position 2</div>
+            <div style="font-size:12px">Click to upload</div>
+          </div>
+          <img class="slot-img" style="display:none;width:100%;height:100%;object-fit:cover" alt="">
+          <div class="slot-overlay">Uploading…</div>
+          <button class="slot-clear-btn btn-ghost btn-sm"
+            style="display:none;position:absolute;top:8px;right:8px;font-size:10px;z-index:2"
+            onclick="clearSlot(event,2)">Remove</button>
+        </div>
+
+        <!-- Position 3 -->
+        <div class="gallery-slot" data-position="3"
+          style="background:var(--cream2);border:.5px solid var(--border);
+          display:flex;align-items:center;justify-content:center;
+          position:relative;overflow:hidden" onclick="openSlotUpload(3)">
+          <div class="slot-placeholder-3" style="text-align:center;color:var(--muted)">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">Position 3</div>
+            <div style="font-size:12px">Click to upload</div>
+          </div>
+          <img class="slot-img" style="display:none;width:100%;height:100%;object-fit:cover" alt="">
+          <div class="slot-overlay">Uploading…</div>
+          <button class="slot-clear-btn btn-ghost btn-sm"
+            style="display:none;position:absolute;top:8px;right:8px;font-size:10px;z-index:2"
+            onclick="clearSlot(event,3)">Remove</button>
+        </div>
+
+        <!-- Position 4 -->
+        <div class="gallery-slot" data-position="4"
+          style="background:var(--cream2);border:.5px solid var(--border);
+          display:flex;align-items:center;justify-content:center;
+          position:relative;overflow:hidden" onclick="openSlotUpload(4)">
+          <div class="slot-placeholder-4" style="text-align:center;color:var(--muted)">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">Position 4</div>
+            <div style="font-size:12px">Click to upload</div>
+          </div>
+          <img class="slot-img" style="display:none;width:100%;height:100%;object-fit:cover" alt="">
+          <div class="slot-overlay">Uploading…</div>
+          <button class="slot-clear-btn btn-ghost btn-sm"
+            style="display:none;position:absolute;top:8px;right:8px;font-size:10px;z-index:2"
+            onclick="clearSlot(event,4)">Remove</button>
+        </div>
+
+        <!-- Position 5 -->
+        <div class="gallery-slot" data-position="5"
+          style="background:var(--cream2);border:.5px solid var(--border);
+          display:flex;align-items:center;justify-content:center;
+          position:relative;overflow:hidden" onclick="openSlotUpload(5)">
+          <div class="slot-placeholder-5" style="text-align:center;color:var(--muted)">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">Position 5</div>
+            <div style="font-size:12px">Click to upload</div>
+          </div>
+          <img class="slot-img" style="display:none;width:100%;height:100%;object-fit:cover" alt="">
+          <div class="slot-overlay">Uploading…</div>
+          <button class="slot-clear-btn btn-ghost btn-sm"
+            style="display:none;position:absolute;top:8px;right:8px;font-size:10px;z-index:2"
+            onclick="clearSlot(event,5)">Remove</button>
+        </div>
+
+      </div>
+
+      <!-- 隐藏 file input -->
+      <input type="file" id="gallery-file-input" accept="image/*" style="display:none"
+        onchange="handleGalleryUpload(this)">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:12px">
+        JPG · PNG · HEIC · Max 10 MB · Saved to Cloudinary gallery/
+      </div>
+      <div id="gallery-alert"></div>
+    </div>
+
+  </main>
+</div>
+
+<script type="module">
+  import { requireAdmin, logout } from '/js/auth.js';
+  import { getContent, updateContent, getGalleryItems, updateGalleryItem, clearGalleryItem, uploadPhoto } from '/js/api.js';
+  import { isConfigured } from '/js/config.js';
+
+  window.logout = logout;
+  requireAdmin();
+
+  // ── Video ────────────────────────────────────────────────────
+
+  // 加载当前值
+  getContent('about_video_url').then(url => {
+    if (url) {
+      document.getElementById('about-video-url').value = url;
+      showVideoPreview(url);
+    }
+  });
+
+  // 输入时实时预览
+  document.getElementById('about-video-url').addEventListener('input', e => {
+    showVideoPreview(e.target.value.trim());
+  });
+
+  function showVideoPreview(url) {
+    const wrap  = document.getElementById('video-preview-wrap');
+    const video = document.getElementById('video-preview');
+    if (!url) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+    video.src = url;
+  }
+
+  window.saveVideoUrl = async () => {
+    const url   = document.getElementById('about-video-url').value.trim();
+    const alert = document.getElementById('video-alert');
+    if (!url) {
+      alert.innerHTML = '<div class="alert alert-error">Please enter a URL.</div>';
+      return;
+    }
+    try {
+      await updateContent('about_video_url', url);
+      alert.innerHTML = '<div class="alert alert-success">Saved.</div>';
+      setTimeout(() => alert.innerHTML = '', 3000);
+    } catch (e) {
+      alert.innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+    }
+  };
+
+  // ── Gallery（5格固定位置）───────────────────────────────────
+
+  let activeSlot = null;
+
+  // 初始化：读取所有格子当前图片
+  getGalleryItems().then(items => {
+    items.forEach(item => {
+      if (item.image_url) setSlotImage(item.position, item.image_url);
+    });
+  }).catch(e => console.error('[gallery] load error:', e));
+
+  // 点击格子 → 记录 position → 触发文件选择
+  window.openSlotUpload = (position) => {
+    activeSlot = position;
+    // 点击瞬间：格子轻闪一下给反馈，再打开文件选择
+    const slot = document.querySelector(`.gallery-slot[data-position="${position}"]`);
+    if (slot) {
+      slot.style.outline = '2px solid var(--gold)';
+      slot.style.outlineOffset = '-2px';
+      setTimeout(() => { slot.style.outline = ''; slot.style.outlineOffset = ''; }, 400);
+    }
+    document.getElementById('gallery-file-input').click();
+  };
+
+  // 上传并保存到对应 position
+  window.handleGalleryUpload = async (input) => {
+    const file = input.files[0];
+    if (!file || !activeSlot) return;
+    const alertEl = document.getElementById('gallery-alert');
+    const slot = document.querySelector(`.gallery-slot[data-position="${activeSlot}"]`);
+    const savedSlot = activeSlot;
+
+    // 上传中：格子变暗 + overlay 显示 Uploading…
+    if (slot) slot.classList.add('uploading');
+    alertEl.innerHTML = '';
+
+    try {
+      const url = await uploadPhoto(file, 'gallery');
+      await updateGalleryItem(savedSlot, url);
+      setSlotImage(savedSlot, url);
+      // 成功：格子短暂绿色边框
+      if (slot) {
+        slot.classList.remove('uploading');
+        slot.style.outline = '2px solid #5a9e5a';
+        setTimeout(() => slot.style.outline = '', 2000);
+      }
+      alertEl.innerHTML = '<div class="alert alert-success">Position ' + savedSlot + ' updated.</div>';
+      setTimeout(() => alertEl.innerHTML = '', 3000);
+    } catch (e) {
+      // 失败：格子恢复 + 红色提示
+      if (slot) {
+        slot.classList.remove('uploading');
+        slot.style.outline = '2px solid #c0392b';
+        setTimeout(() => slot.style.outline = '', 3000);
+      }
+      alertEl.innerHTML = `<div class="alert alert-error">Upload failed: ${e.message}</div>`;
+    }
+    input.value = '';
+    activeSlot = null;
+  };
+
+  // 渲染图片到对应格子
+  function setSlotImage(position, url) {
+    const slot = document.querySelector(`.gallery-slot[data-position="${position}"]`);
+    if (!slot) return;
+    const placeholders = slot.querySelectorAll('[class*="slot-placeholder"]');
+    placeholders.forEach(ph => ph.style.display = 'none');
+    const img = slot.querySelector('.slot-img');
+    img.src = url; img.style.display = 'block';
+    slot.querySelector('.slot-clear-btn').style.display = 'block';
+  }
+
+  // 清空格子
+  window.clearSlot = async (e, position) => {
+    e.stopPropagation();
+    if (!confirm('Remove image from position ' + position + '?')) return;
+    const alertEl = document.getElementById('gallery-alert');
+    try {
+      await clearGalleryItem(position);
+      const slot = document.querySelector(`.gallery-slot[data-position="${position}"]`);
+      const placeholders = slot.querySelectorAll('[class*="slot-placeholder"]');
+      placeholders.forEach(ph => ph.style.display = 'block');
+      slot.querySelector('.slot-img').style.display = 'none';
+      slot.querySelector('.slot-clear-btn').style.display = 'none';
+      alertEl.innerHTML = '<div class="alert alert-success">Position ' + position + ' cleared.</div>';
+      setTimeout(() => alertEl.innerHTML = '', 3000);
+    } catch (e) {
+      alertEl.innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+    }
+  };
+
+  // 未配置时显示提示
+  if (!isConfigured()) {
+    document.querySelector('.admin-main').insertAdjacentHTML('afterbegin',
+      '<div class="alert alert-info" style="margin-bottom:24px">Configure Supabase in js/config.js to enable content management.</div>');
+  }
+
+</script>
+</body>
+</html>
