@@ -1,3 +1,34 @@
+// Toast 提示（替代原生 alert）
+function showToast(msg, type = 'success') {
+  let toast = document.getElementById('admin-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'admin-toast';
+    toast.style.cssText = 'position:fixed;top:76px;right:32px;z-index:9999;min-width:200px;max-width:320px;transition:opacity .3s';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<div class="alert alert-${type}" style="box-shadow:0 2px 12px rgba(0,0,0,.12)">${msg}</div>`;
+  toast.style.opacity = '1';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+}
+
+// Toast 提示（替代原生 alert）
+let _toastTimer = null;
+function showToast(msg, type = 'success') {
+  let toast = document.getElementById('admin-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'admin-toast';
+    toast.style.cssText = 'position:fixed;top:76px;right:32px;z-index:9999;min-width:200px;max-width:320px;display:none';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<div class="alert alert-${type}" style="box-shadow:0 2px 12px rgba(0,0,0,.12)">${msg}</div>`;
+  toast.style.display = 'block';
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 3000);
+}
+
 import { getAllOrders, updateOrder, getProducts, updateProduct, uploadPhoto } from "./api.js";
 import { requireAdmin, logout, updateNav } from "./auth.js";
 import { supabase } from "./auth.js";
@@ -71,7 +102,7 @@ window.changeStatus = async (id,status) => { await updateOrder(id,{status}); };
 window.uploadPreview = async (id,file) => {
   const url = await uploadPhoto(file);
   await updateOrder(id,{preview_url:url,status:"preview_sent"});
-  alert("Preview uploaded. Status set to preview_sent.");
+  showToast("Preview uploaded.");
   loadOrders();
 };
 window.saveNote = async (id,note) => { await updateOrder(id,{admin_note:note}); };
@@ -112,13 +143,13 @@ window.saveProduct = async id => {
     name: document.getElementById("name-"+id).value,
     tagline: document.getElementById("tagline-"+id).value
   });
-  alert("Saved.");
+  showToast("Changes saved.");
 };
 window.replaceImg = async (id,file) => {
   const url = await uploadPhoto(file);
   await updateProduct(id,{hero_url:url});
   document.getElementById("img-"+id).src = url;
-  alert("Image updated.");
+  showToast("Image updated.");
 };
 window.saveEdition = async (productId,idx,field,value) => {
   const { data:p } = await supabase.from("products").select("editions").eq("id",productId).maybeSingle();

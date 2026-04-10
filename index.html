@@ -508,8 +508,11 @@ function handleInquiry(e) {
         family: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="34" stroke="#C4A882" stroke-width=".7" stroke-dasharray="2 5"/><circle cx="24" cy="33" r="9" fill="#C8B49A" opacity=".42"/><circle cx="40" cy="29" r="11" fill="#C8B49A" opacity=".48"/><circle cx="56" cy="33" r="9" fill="#C8B49A" opacity=".42"/><ellipse cx="40" cy="56" rx="24" ry="10" fill="#C8B49A" opacity=".28"/></svg>`
       };
       const bg = thumbBg[slug] || 'var(--cream2)';
+      const thumbContent = p.hero_url
+        ? `<img src="${p.hero_url}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;display:block">`
+        : (thumbSvgs[slug] || '');
       return `<div class="product-card" onclick="location.href='/product.html?id=${slug}'">
-        <div class="product-thumb" style="background:${bg};height:180px;display:flex;align-items:center;justify-content:center">${thumbSvgs[slug] || ''}</div>
+        <div class="product-thumb" style="background:${bg};height:180px;display:flex;align-items:center;justify-content:center;overflow:hidden">${thumbContent}</div>
         <div class="product-info">
           ${badge}
           <div class="product-name">${p.name}</div>
