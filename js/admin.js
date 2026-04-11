@@ -1,19 +1,4 @@
 // Toast 提示（替代原生 alert）
-function showToast(msg, type = 'success') {
-  let toast = document.getElementById('admin-toast');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'admin-toast';
-    toast.style.cssText = 'position:fixed;top:76px;right:32px;z-index:9999;min-width:200px;max-width:320px;transition:opacity .3s';
-    document.body.appendChild(toast);
-  }
-  toast.innerHTML = `<div class="alert alert-${type}" style="box-shadow:0 2px 12px rgba(0,0,0,.12)">${msg}</div>`;
-  toast.style.opacity = '1';
-  clearTimeout(toast._timer);
-  toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 3000);
-}
-
-// Toast 提示（替代原生 alert）
 let _toastTimer = null;
 function showToast(msg, type = 'success') {
   let toast = document.getElementById('admin-toast');
