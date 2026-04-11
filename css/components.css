@@ -19,6 +19,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .badge-shipped{background:#D4E8D4;color:#2A6A2A}
 .badge-complete{background:#E8E4D8;color:var(--ink2)}
 .badge-revision_requested{background:#F0E0D0;color:#884020}
+.badge-paid{background:#EAF4EA;color:#3A6A3A}
+.badge-preview_approved{background:#D4E8D4;color:#2A6A2A}
 .alert{padding:14px 18px;font-size:14px;margin-bottom:18px;line-height:1.7}
 .alert-success{background:#EAF4EA;color:var(--success);border:.5px solid var(--success)}
 .alert-error{background:#F4EAEA;color:var(--danger);border:.5px solid var(--danger)}

@@ -40,22 +40,41 @@ async function initDashboard() {
   });
 }
 
-const STATUSES = ["pending","in_production","preview_sent","revision_requested","preview_approved","shipped","complete","cancelled"];
+const STATUSES = ["pending","paid","in_production","preview_sent","revision_requested","preview_approved","shipped","complete","cancelled"];
+
+const STATUS_LABEL = {
+  pending:            'Awaiting payment',
+  paid:               'Order confirmed',
+  in_production:      'In production',
+  preview_sent:       'Preview ready',
+  revision_requested: 'Revision requested',
+  preview_approved:   'Preview approved',
+  shipped:            'Shipped',
+  complete:           'Complete',
+  cancelled:          'Cancelled',
+};
 
 async function initOrders() {
-  document.getElementById("status-filter").addEventListener("change", e => loadOrders(e.target.value));
   loadOrders();
 }
 
+window.loadOrders = loadOrders;
 async function loadOrders(status) {
   const orders = await getAllOrders(status ? { status } : {});
   document.getElementById('orders-tbody').innerHTML = orders.map(o => {
     const cust    = o.customer_email || '—';
-    const prod    = o.products?.name || '—';
-    const opts    = STATUSES.map(s =>
-      `<option value="${s}"${o.status === s ? ' selected' : ''}>${s}</option>`).join('');
+    const prod    = o.product?.name || o.product_slug || '—';
+    const statusLabel = STATUS_LABEL[o.status] || o.status;
+    const orderId = o.id;
+    const statusOpts = STATUSES.map(s => {
+      const active = s === o.status ? ' active' : '';
+      const label  = STATUS_LABEL[s] || s;
+      return '<div class="status-opt' + active + '" data-id="' + orderId + '" data-val="' + s + '">' + label + '</div>';
+    }).join('');
     const photo   = o.photo_url
-      ? `<a href="${o.photo_url}" target="_blank" style="color:var(--gold);font-size:11px">View</a>` : '—';
+      ? `<a href="${o.photo_url}" target="_blank">
+          <img src="${o.photo_url}" style="width:48px;height:48px;object-fit:cover;border:.5px solid var(--border);display:block">
+        </a>` : '—';
     const prevLink = o.preview_url
       ? ` <a href="${o.preview_url}" target="_blank" style="color:var(--gold);font-size:11px">View</a>` : '';
     return `
@@ -65,7 +84,10 @@ async function loadOrders(status) {
         <td>${prod}</td>
         <td>${new Date(o.created_at).toLocaleDateString()}</td>
         <td>
-          <select onchange="changeStatus('${o.id}', this.value)">${opts}</select>
+          <div class="status-drop" onclick="this.classList.toggle('open')">
+            <span class="badge badge-${o.status}">${statusLabel} &#9662;</span>
+            <div class="status-menu">${statusOpts}</div>
+          </div>
         </td>
         <td>${photo}</td>
         <td>
@@ -83,7 +105,7 @@ async function loadOrders(status) {
   }).join('');
 }
 
-window.changeStatus = async (id,status) => { await updateOrder(id,{status}); };
+window.changeStatus = async (id,status) => { await updateOrder(id,{status}); location.reload(); };
 window.uploadPreview = async (id,file) => {
   const url = await uploadPhoto(file);
   await updateOrder(id,{preview_url:url,status:"preview_sent"});

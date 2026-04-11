@@ -63,6 +63,7 @@ window.submitDetails = async e => {
       user_id:         user.id,
       product_slug:    productId,
       edition_index:   editionIdx,
+      edition_label:   params.get('edition_label') || '',
       stripe_price_id: priceId,
       photo_url:       uploadedPhotoUrl,
       subject_name:    fd.get("subject_name"),

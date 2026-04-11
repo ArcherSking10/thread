@@ -7,6 +7,44 @@
 <link rel="stylesheet" href="/css/base.css">
 <link rel="stylesheet" href="/css/components.css">
 <link rel="stylesheet" href="/css/layout.css">
+<style>
+.status-drop { position:relative; display:inline-block; cursor:pointer; user-select:none; }
+.status-drop .badge { cursor:pointer; }
+.status-drop .badge:hover { opacity:.85; }
+.status-menu {
+  display:none; position:fixed; z-index:1000;
+  background:var(--cream); border:.5px solid var(--border);
+  box-shadow:0 4px 16px rgba(0,0,0,.08); min-width:180px; padding:4px 0;
+}
+.status-drop.open .status-menu { display:block; }
+.status-opt {
+  padding:8px 14px; font-size:11px; letter-spacing:.08em; color:var(--ink2);
+  cursor:pointer; text-transform:uppercase;
+}
+.status-opt:hover { background:var(--cream2); }
+.status-opt.active { color:var(--gold); }
+
+/* Filter dropdown */
+.filter-drop { position:relative; display:inline-block; }
+.filter-btn {
+  font-family:inherit; font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink2); background:var(--cream); border:.5px solid var(--border);
+  padding:8px 16px; cursor:pointer; display:flex; align-items:center;
+}
+.filter-btn:hover { background:var(--cream2); }
+.filter-menu {
+  display:none; position:absolute; top:calc(100% + 4px); right:0; z-index:1000;
+  background:var(--cream); border:.5px solid var(--border);
+  box-shadow:0 4px 16px rgba(0,0,0,.08); min-width:200px; padding:4px 0;
+}
+.filter-drop.open .filter-menu { display:block; }
+.filter-opt {
+  padding:8px 16px; font-size:11px; letter-spacing:.08em; color:var(--ink2);
+  cursor:pointer; text-transform:uppercase;
+}
+.filter-opt:hover { background:var(--cream2); }
+.filter-opt.active { color:var(--gold); }
+</style>
 </head>
 <body data-page="orders">
 
@@ -26,16 +64,23 @@
   <main class="admin-main">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
       <div class="admin-title" style="margin-bottom:0">Orders</div>
-      <select class="f-input" id="status-filter" style="width:200px;padding:8px 12px">
-        <option value="">All statuses</option>
-        <option>pending</option>
-        <option>in_production</option>
-        <option>preview_sent</option>
-        <option>revision_requested</option>
-        <option>preview_approved</option>
-        <option>shipped</option>
-        <option>complete</option>
-      </select>
+      <div class="filter-drop" id="filter-drop">
+        <button class="filter-btn" id="filter-btn" onclick="toggleFilter(event)">
+          <span id="filter-label">All statuses</span>
+          <span style="margin-left:8px;font-size:10px">&#9662;</span>
+        </button>
+        <div class="filter-menu" id="filter-menu">
+          <div class="filter-opt active" data-val="" onclick="selectFilter(this,'All statuses')">All statuses</div>
+          <div class="filter-opt" data-val="pending"            onclick="selectFilter(this,'Awaiting payment')">Awaiting payment</div>
+          <div class="filter-opt" data-val="paid"              onclick="selectFilter(this,'Order confirmed')">Order confirmed</div>
+          <div class="filter-opt" data-val="in_production"     onclick="selectFilter(this,'In production')">In production</div>
+          <div class="filter-opt" data-val="preview_sent"      onclick="selectFilter(this,'Preview ready')">Preview ready</div>
+          <div class="filter-opt" data-val="revision_requested" onclick="selectFilter(this,'Revision requested')">Revision requested</div>
+          <div class="filter-opt" data-val="preview_approved"  onclick="selectFilter(this,'Preview approved')">Preview approved</div>
+          <div class="filter-opt" data-val="shipped"           onclick="selectFilter(this,'Shipped')">Shipped</div>
+          <div class="filter-opt" data-val="complete"          onclick="selectFilter(this,'Complete')">Complete</div>
+        </div>
+      </div>
     </div>
     <div style="overflow-x:auto">
       <table class="tbl">
@@ -73,10 +118,68 @@
       `<tr><td colspan="8" style="padding:32px">
         <div class="alert alert-info">Configure Supabase in js/config.js to view orders.</div>
       </td></tr>`;
-    document.getElementById('status-filter').disabled = true;
+    document.getElementById('filter-btn').disabled = true; document.getElementById('filter-btn').style.opacity = '.5';
   } else {
     import('/js/admin.js');
   }
+</script>
+<script>
+function toggleFilter(e) {
+  if (e) e.stopPropagation();
+  document.getElementById('filter-drop').classList.toggle('open');
+}
+
+function selectFilter(el, label) {
+  document.getElementById('filter-label').textContent = label;
+  document.querySelectorAll('.filter-opt').forEach(o => o.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('filter-drop').classList.remove('open');
+  const val = el.dataset.val;
+  if (typeof window.loadOrders === 'function') window.loadOrders(val || undefined);
+}
+
+// Track open drop to match fixed-position menu clicks
+let _openDrop = null;
+
+document.addEventListener('click', e => {
+  // Click on a status-opt (fixed position, outside DOM parent visually)
+  const opt = e.target.closest('.status-opt');
+  if (opt) {
+    const id  = opt.dataset.id;
+    const val = opt.dataset.val;
+    if (id && val && typeof window.changeStatus === 'function') {
+      window.changeStatus(id, val);
+    }
+    if (_openDrop) { _openDrop.classList.remove('open'); _openDrop = null; }
+    return;
+  }
+
+  // Click on filter-opt
+  const fopt = e.target.closest('.filter-opt');
+  if (fopt) return; // handled by onclick attribute
+
+  // Click on status-drop: toggle
+  const drop = e.target.closest('.status-drop');
+  if (drop) {
+    const wasOpen = drop === _openDrop;
+    if (_openDrop) { _openDrop.classList.remove('open'); _openDrop = null; }
+    if (!wasOpen) {
+      drop.classList.add('open');
+      _openDrop = drop;
+      // Position menu below badge
+      const badge = drop.querySelector('.badge');
+      const rect  = badge.getBoundingClientRect();
+      const menu  = drop.querySelector('.status-menu');
+      menu.style.top  = (rect.bottom + 4) + 'px';
+      menu.style.left = rect.left + 'px';
+    }
+    return;
+  }
+
+  // Click elsewhere: close all
+  if (_openDrop) { _openDrop.classList.remove('open'); _openDrop = null; }
+  document.getElementById('filter-drop')?.classList.remove('open');
+});
 </script>
 </body>
 </html>
