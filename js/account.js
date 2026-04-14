@@ -108,7 +108,7 @@ async function init() {
             <p style="font-size:13px;color:var(--ink2);margin-bottom:10px;line-height:1.7">
               Your order is saved but payment hasn't been completed yet.
             </p>
-            <a href="/checkout.html?product=${o.product_slug}&edition=${o.edition_index}&price=${o.stripe_price_id}"
+            <a href="/checkout.html?order_id=${o.id}&price=${o.stripe_price_id}&product=${o.product_slug}"
               class="btn-dark btn-sm" style="display:inline-block">Complete payment →</a>
           </div>`;
       }

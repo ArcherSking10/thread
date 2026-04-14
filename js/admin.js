@@ -90,13 +90,7 @@ async function loadOrders(status) {
           </div>
         </td>
         <td>${photo}</td>
-        <td>
-          <input type="file" id="pf-${o.id}" style="display:none" accept="image/*"
-            onchange="uploadPreview('${o.id}', this.files[0])">
-          <button class="btn-ghost btn-sm"
-            onclick="document.getElementById('pf-${o.id}').click()">
-            ${o.preview_url ? 'Replace' : 'Upload preview'}</button>${prevLink}
-        </td>
+        <td>${buildActionCell(o)}</td>
         <td>
           <textarea rows="2" style="min-width:120px"
             onblur="saveNote('${o.id}', this.value)">${o.admin_note || ''}</textarea>
@@ -105,14 +99,82 @@ async function loadOrders(status) {
   }).join('');
 }
 
-window.changeStatus = async (id,status) => { await updateOrder(id,{status}); location.reload(); };
-window.uploadPreview = async (id,file) => {
-  const url = await uploadPhoto(file);
-  await updateOrder(id,{preview_url:url,status:"preview_sent"});
-  showToast("Preview uploaded.");
-  loadOrders();
+window.changeStatus = async (id, status) => { await updateOrder(id, { status }); location.reload(); };
+window.saveNote     = async (id, note) => { await updateOrder(id, { admin_note: note }); };
+
+// Build action cell based on order status
+function buildActionCell(o) {
+  const id = o.id;
+
+  const previewThumb = o.preview_url
+    ? `<a href="${o.preview_url}" target="_blank"><img src="${o.preview_url}" style="width:48px;height:48px;object-fit:cover;border:.5px solid var(--border);display:block;margin-bottom:6px"></a>`
+    : '';
+
+  const revNote = o.customer_note
+    ? `<div style="font-size:11px;color:var(--muted);margin-bottom:8px;max-width:160px;line-height:1.5">Note: ${o.customer_note}</div>`
+    : '';
+
+  if (o.status === 'paid') {
+    return `<button class="btn-dark btn-sm" onclick="startProduction('${id}')">Start production</button>`;
+  }
+
+  if (o.status === 'in_production' || o.status === 'revision_requested') {
+    return revNote +
+      `<input type="file" id="pf-${id}" style="display:none" accept="image/*" onchange="uploadPreview('${id}', this.files[0])">` +
+      `<button class="btn-ghost btn-sm" onclick="document.getElementById('pf-${id}').click()">Upload preview</button>`;
+  }
+
+  if (o.status === 'preview_sent') {
+    return previewThumb +
+      '<div style="font-size:11px;color:var(--muted)">Awaiting approval</div>';
+  }
+
+  if (o.status === 'preview_approved') {
+    return '<div style="font-size:11px;color:var(--muted);margin-bottom:8px">Ready to produce</div>' +
+      `<input class="f-input" id="tr-${id}" placeholder="Tracking number" style="margin-bottom:6px;font-size:12px">` +
+      `<button class="btn-dark btn-sm" onclick="markShipped('${id}')">Mark as shipped</button>`;
+  }
+
+  if (o.status === 'shipped') {
+    return `<button class="btn-ghost btn-sm" onclick="markComplete('${id}')">Mark as complete</button>`;
+  }
+
+  return previewThumb || '—';
+}
+
+
+window.startProduction = async (id) => {
+  await updateOrder(id, { status: 'in_production' });
+  showToast('Production started.');
+  location.reload();
 };
-window.saveNote = async (id,note) => { await updateOrder(id,{admin_note:note}); };
+
+window.uploadPreview = async (id, file) => {
+  if (!file) return;
+  showToast('Uploading preview...');
+  try {
+    const url = await uploadPhoto(file);
+    await updateOrder(id, { preview_url: url, status: 'preview_sent' });
+    showToast('Preview sent to customer.');
+    location.reload();
+  } catch (e) {
+    showToast('Upload failed: ' + e.message, 'error');
+  }
+};
+
+window.markShipped = async (id) => {
+  const tracking = document.getElementById('tr-' + id)?.value.trim();
+  if (!tracking) { showToast('Please enter a tracking number.', 'error'); return; }
+  await updateOrder(id, { status: 'shipped', tracking_number: tracking });
+  showToast('Marked as shipped.');
+  location.reload();
+};
+
+window.markComplete = async (id) => {
+  await updateOrder(id, { status: 'complete' });
+  showToast('Order complete.');
+  location.reload();
+};
 
 async function initProducts() {
   const products = await getProducts();

@@ -128,5 +128,19 @@ window.addEventListener('scroll', () =>
   document.getElementById('navbar').classList.toggle('scrolled', scrollY > 40));
 </script>
 <script type="module" src="/js/checkout.js"></script>
+<script>
+// Immediately switch to Step 3 if resuming payment — runs before module loads
+(function() {
+  const p = new URLSearchParams(location.search);
+  if (p.get('order_id')) {
+    document.querySelectorAll('.step-panel').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.s-step').forEach(el => el.classList.remove('active'));
+    const p3 = document.getElementById('panel3');
+    const d3 = document.getElementById('dot3');
+    if (p3) p3.classList.add('active');
+    if (d3) d3.classList.add('active');
+  }
+})();
+</script>
 </body>
 </html>

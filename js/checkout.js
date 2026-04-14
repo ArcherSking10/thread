@@ -9,8 +9,19 @@ let uploadedPhotoUrl = null, orderId = null;
 
 async function init() {
   updateNav();
+
+  // If order_id is in URL, resume payment — show Step 3 immediately before auth
+  const existingOrderId = params.get('order_id');
+  if (existingOrderId) {
+    showStep(3);
+    await requireAuth();
+    orderId = existingOrderId;
+    return;
+  }
+
   await requireAuth();
-  // CHECKOUT-02: populate order summary from URL params
+
+  // Normal checkout: populate order summary from URL params
   const productName  = params.get('name')          || '';
   const editionLabel = params.get('edition_label') || '';
   const priceDisplay = params.get('price_display') || '';
