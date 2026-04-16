@@ -498,6 +498,7 @@ function handleInquiry(e) {
     document.getElementById('products-grid').innerHTML = products.map(p => {
       const slug = p.slug || p.id;
       const fromPrice = p.editions?.[0]?.price_display || '';
+      const fromBase = fromPrice.split(/[–\-]/)[0];   // 兼容 en-dash 和 hyphen
       const editionCount = p.editions?.length || 2;
       const priceLabel = slug === 'family' ? 'Custom quote' : `${editionCount} editions`;
       const badge = p.badge ? `<div class="product-badge">${p.badge}</div>` : '';
@@ -516,11 +517,14 @@ function handleInquiry(e) {
         <div class="product-info">
           ${badge}
           <div class="product-name">${p.name}</div>
-          <div class="product-price">From ${fromPrice.split('–')[0]} · ${priceLabel}</div>
+          <div class="product-price">From ${fromBase} · ${priceLabel}</div>
         </div>
         <div class="product-card-hint">View details →</div>
       </div>`;
     }).join('');
+  }).catch(() => {
+    document.getElementById('products-grid').innerHTML =
+      '<div style="grid-column:1/-1;text-align:center;padding:40px 0;font-size:13px;color:var(--muted)">Unable to load products. Please try again later.</div>';
   });
 </script>
 </body>

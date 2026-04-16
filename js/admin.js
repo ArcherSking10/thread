@@ -176,8 +176,11 @@ window.markComplete = async (id) => {
   location.reload();
 };
 
+let _productsCache = [];
+
 async function initProducts() {
   const products = await getProducts();
+  _productsCache = products;
   document.getElementById("products-editor").innerHTML = products.map(p => {
     const editions = p.editions.map((ed,i) => {
       return `<div style="border:.5px solid var(--border2);padding:12px;margin-bottom:10px">
@@ -221,10 +224,10 @@ window.replaceImg = async (id,file) => {
   showToast("Image updated.");
 };
 window.saveEdition = async (productId,idx,field,value) => {
-  const { data:p } = await supabase.from("products").select("editions").eq("id",productId).maybeSingle();
-  const editions = p.editions;
-  editions[idx][field] = value;
-  await updateProduct(productId,{editions});
+  const prod = _productsCache.find(p => p.id === productId);
+  if (!prod) return;
+  prod.editions[idx][field] = value;
+  await updateProduct(productId, { editions: prod.editions });
 };
 
 init();

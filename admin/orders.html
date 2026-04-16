@@ -180,6 +180,11 @@ document.addEventListener('click', e => {
   if (_openDrop) { _openDrop.classList.remove('open'); _openDrop = null; }
   document.getElementById('filter-drop')?.classList.remove('open');
 });
+
+// 滚动时关闭已打开的 status 下拉（fixed 定位菜单不会跟随滚动）
+window.addEventListener('scroll', () => {
+  if (_openDrop) { _openDrop.classList.remove('open'); _openDrop = null; }
+}, true);
 </script>
 </body>
 </html>

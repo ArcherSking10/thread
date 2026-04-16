@@ -130,6 +130,7 @@ export async function submitPreviewResponse(orderId, action, note = '') {
 // ── Cloudinary 上传 ──────────────────────────────────────────
 
 export async function uploadPhoto(file, folder = 'orders') {
+  if (file.size > 10 * 1024 * 1024) throw new Error('File too large (max 10 MB)');
   if (!isConfigured()) {
     // 本地调试：返回 object URL 模拟上传
     return URL.createObjectURL(file);

@@ -82,7 +82,7 @@ window.submitDetails = async e => {
       notes:           fd.get("notes")
     });
     orderId = order.id; showStep(3);
-  } catch(e) { document.getElementById("step2-alert").textContent = e.message; }
+  } catch(e) { document.getElementById("step2-alert").innerHTML = `<div class="alert alert-error">${e.message}</div>`; }
 };
 
 window.proceedToPayment = async () => {
@@ -91,7 +91,7 @@ window.proceedToPayment = async () => {
   btn.textContent = "Redirecting..."; btn.disabled = true;
   try { await startStripeCheckout(orderId, priceId, user.email); }
   catch(e) { btn.textContent = "Pay now →"; btn.disabled = false;
-    document.getElementById("step3-alert").textContent = e.message; }
+    document.getElementById("step3-alert").innerHTML = `<div class="alert alert-error">${e.message}</div>`; }
 };
 
 init();

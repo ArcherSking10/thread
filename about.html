@@ -225,7 +225,13 @@ document.getElementById('footer-year').textContent = new Date().getFullYear();
   // 从数据库读取视频 URL，无竞态（不在 HTML 里写 src）
   getContent('about_video_url').then(url => {
     const video = document.getElementById('about-video');
-    if (video && url) video.src = url;
+    if (video && url) {
+      video.src = url;
+      video.onerror = () => {
+        video.parentElement.innerHTML =
+          '<div style="padding:60px;text-align:center;color:var(--muted);font-size:13px;border:.5px solid var(--border);background:var(--cream2)">Video unavailable. Please check back later.</div>';
+      };
+    }
   });
 </script>
 </body>
