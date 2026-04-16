@@ -1,3 +1,13 @@
+-- 幂等：可重复执行整个 schema.sql（会清空数据）
+DROP TABLE IF EXISTS gallery_items CASCADE;
+DROP TABLE IF EXISTS site_content  CASCADE;
+DROP TABLE IF EXISTS orders        CASCADE;
+DROP TABLE IF EXISTS profiles      CASCADE;
+DROP TABLE IF EXISTS products      CASCADE;
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
+DROP FUNCTION IF EXISTS public.is_admin()        CASCADE;
+
 -- 重建 products，slug 作为唯一标识
 CREATE TABLE products (
   id         uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -53,10 +63,29 @@ CREATE TABLE orders (
   notes            text,
   customer_note    text,
   admin_note       text,
+  edition_label    text,
+  tracking_number  text,
   amount_paid      int,
   created_at       timestamptz DEFAULT now(),
   updated_at       timestamptz DEFAULT now()
 );
+
+-- Admin 判定 helper：SECURITY DEFINER 绕过 RLS 直接读 profiles.role
+-- 注意：默认 Supabase JWT 不包含自定义 role claim，所以不能用 auth.jwt() ->> 'role'
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid() AND role = 'admin'
+  );
+$$;
+
+GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated;
 
 -- RLS
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
@@ -65,19 +94,19 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "products_public_read" ON products FOR SELECT USING (true);
 CREATE POLICY "products_admin_write" ON products FOR ALL
-  USING (auth.jwt() ->> 'role' = 'admin');
+  USING (public.is_admin());
 
 CREATE POLICY "orders_own_read"   ON orders FOR SELECT USING (user_id = auth.uid());
 CREATE POLICY "orders_own_insert" ON orders FOR INSERT WITH CHECK (user_id = auth.uid());
 CREATE POLICY "orders_own_update" ON orders FOR UPDATE USING (user_id = auth.uid());
 CREATE POLICY "orders_admin_all"  ON orders FOR ALL
-  USING (auth.jwt() ->> 'role' = 'admin');
+  USING (public.is_admin());
 
 CREATE POLICY "profiles_own"          ON profiles FOR SELECT USING (id = auth.uid());
 CREATE POLICY "profiles_insert_own"   ON profiles FOR INSERT WITH CHECK (id = auth.uid());
 CREATE POLICY "profiles_update_own"   ON profiles FOR UPDATE USING (id = auth.uid());
 CREATE POLICY "profiles_admin"        ON profiles FOR ALL
-  USING (auth.jwt() ->> 'role' = 'admin');
+  USING (public.is_admin());
 
 -- Seed
 INSERT INTO products (slug, name, tagline, sort_order, editions) VALUES
@@ -100,23 +129,25 @@ CREATE TABLE site_content (
 ALTER TABLE site_content ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "content_public_read" ON site_content FOR SELECT USING (true);
 CREATE POLICY "content_admin_write" ON site_content FOR ALL
-  USING (auth.jwt() ->> 'role' = 'admin');
+  USING (public.is_admin());
 
 INSERT INTO site_content (key, value, label) VALUES
 ('about_video_url',
  'https://res.cloudinary.com/demo/video/upload/f_auto,q_auto/docs/walking_talking.mp4',
  'About page video');
 
--- ── gallery_items：Gallery 作品图（结构化，支持多张排序）────────
+-- ── gallery_items：固定 5 槽位（position 1-5 对应首页 gallery 5 格）────
 CREATE TABLE gallery_items (
-  id         uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  image_url  text NOT NULL,
-  caption    text,
-  sort_order int DEFAULT 0,
-  created_at timestamptz DEFAULT now()
+  position   int PRIMARY KEY CHECK (position BETWEEN 1 AND 5),
+  image_url  text,           -- 允许 NULL（清空槽位）
+  alt_text   text,
+  updated_at timestamptz DEFAULT now()
 );
+
+-- 预填 5 个空槽位
+INSERT INTO gallery_items (position) VALUES (1),(2),(3),(4),(5);
 
 ALTER TABLE gallery_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "gallery_public_read" ON gallery_items FOR SELECT USING (true);
 CREATE POLICY "gallery_admin_write" ON gallery_items FOR ALL
-  USING (auth.jwt() ->> 'role' = 'admin');
+  USING (public.is_admin());
